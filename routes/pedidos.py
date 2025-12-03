@@ -17,3 +17,16 @@ def detalhes_pedido():
 @pedidos.route('/avaliar_pedido')
 def avaliar_pedido():
     return render_template('avaliar_pedido.html')
+
+@pedidos.route('/editar_pedido')
+def editar_pedido():
+    return render_template('editar_pedido.html')
+
+@pedidos.route('/excluir_pedido', methods=['POST'])
+def excluir_pedido():
+    return "Pedido excluído com sucesso!"
+
+@pedidos.route('/concluir_pedido', methods=['POST'])
+def concluir_pedido():
+    return "Pedido concluído com sucesso!"
+
