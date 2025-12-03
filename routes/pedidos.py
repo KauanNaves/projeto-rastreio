@@ -13,3 +13,7 @@ def novo_pedido():
 @pedidos.route('/detalhes_pedido')
 def detalhes_pedido():
     return render_template('detalhes_pedido.html')
+
+@pedidos.route('/avaliar_pedido')
+def avaliar_pedido():
+    return render_template('avaliar_pedido.html')

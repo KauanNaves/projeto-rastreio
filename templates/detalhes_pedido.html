@@ -23,6 +23,11 @@
         </div>
         
         <div class="d-flex gap-2">
+            
+            <a href="{{ url_for('pedidos.avaliar_pedido') }}" class="btn btn-warning bg-opacity-25 border-warning text-dark fw-semibold">
+                <i class="bi bi-star-fill text-warning me-1"></i> <span class="d-none d-sm-inline">Avaliar</span>
+            </a>
+
             <button type="button" class="btn btn-outline-secondary" onclick="compartilharPedido()">
                 <i class="bi bi-share"></i> <span class="d-none d-sm-inline">Compartilhar</span>
             </button>
@@ -30,6 +35,7 @@
             <a href="#" class="btn btn-outline-primary">
                 <i class="bi bi-pencil"></i> <span class="d-none d-sm-inline">Editar</span>
             </a>
+
             <button type="button" class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#modalExcluir">
                 <i class="bi bi-trash"></i> <span class="d-none d-sm-inline">Excluir</span>
             </button>
@@ -113,6 +119,14 @@
                             </div>
                         </li>
 
+                        <li class="list-group-item p-3">
+                            <span class="d-block text-muted small text-uppercase fw-bold mb-1">Prioridade</span>
+                            <div class="d-flex align-items-center gap-2">
+                                <i class="bi bi-flag-fill text-danger"></i>
+                                <span class="fw-bold text-danger">Alta</span>
+                            </div>
+                        </li>
+
                          <li class="list-group-item p-3">
                             <span class="d-block text-muted small text-uppercase fw-bold mb-1">Contato</span>
                             <a href="mailto:ana@exemplo.com" class="text-decoration-none">ana@exemplo.com</a>
@@ -149,14 +163,12 @@
 
 <script>
     async function compartilharPedido() {
-        // Dados a serem compartilhados
         const shareData = {
             title: 'FabTrack - Pedido #123456',
             text: 'Veja os detalhes do pedido #123456 no FabTrack:',
-            url: window.location.href // Pega a URL atual da página
+            url: window.location.href
         };
 
-        // Verifica se o navegador suporta a API nativa de compartilhamento (comum em celulares)
         if (navigator.share) {
             try {
                 await navigator.share(shareData);
@@ -164,7 +176,6 @@
                 console.log('Usuário cancelou o compartilhamento');
             }
         } else {
-            // Fallback para PC: Copia o link para a área de transferência
             try {
                 await navigator.clipboard.writeText(window.location.href);
                 alert('Link copiado para a área de transferência!');

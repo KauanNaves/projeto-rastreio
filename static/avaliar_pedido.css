@@ -1,0 +1,27 @@
+/* Estilo para as estrelas interativas */
+.cursor-pointer {
+    cursor: pointer;
+    transition: transform 0.2s ease, color 0.2s;
+}
+
+/* Efeito de "pop" ao passar o mouse */
+.cursor-pointer:hover {
+    transform: scale(1.2);
+}
+
+/* Ajuste no textarea para parecer mais convidativo */
+textarea.form-control {
+    border: 1px solid #dee2e6;
+    resize: none;
+}
+
+textarea.form-control:focus {
+    background-color: #fff;
+    box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.1);
+}
+
+/* Checkboxes personalizados para ficarem mais bonitos */
+.form-check-input:checked {
+    background-color: var(--cor-primaria);
+    border-color: var(--cor-primaria);
+}
