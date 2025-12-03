@@ -18,8 +18,10 @@ def detalhes_pedido():
 def avaliar_pedido():
     return render_template('avaliar_pedido.html')
 
-@pedidos.route('/editar_pedido')
+@pedidos.route('/editar_pedido', methods=['GET', 'POST'])
 def editar_pedido():
+    if request.method == 'POST':
+        return redirect(url_for('pedidos.detalhes_pedido'))
     return render_template('editar_pedido.html')
 
 @pedidos.route('/excluir_pedido', methods=['POST'])

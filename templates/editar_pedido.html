@@ -1,0 +1,106 @@
+{% extends "base.html" %}
+{% block title %}Editar Pedido #123456{% endblock %} 
+
+{% block extra_styles %}
+<link rel="stylesheet" href="{{ url_for('static', filename='novo_pedido.css') }}" />
+{% endblock %}
+
+{% block content %}
+
+<section class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-8 col-xl-7">
+            
+            <div class="mb-3">
+                <a href="{{ url_for('pedidos.detalhes_pedido') }}" class="text-decoration-none text-secondary d-flex align-items-center gap-2">
+                    <i class="bi bi-arrow-left"></i> Cancelar e Voltar
+                </a>
+            </div>
+
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-white border-bottom py-3">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h1 class="h4 fw-bold text-primary mb-0 d-flex align-items-center gap-2">
+                            <i class="bi bi-pencil-square"></i> Editar Pedido <span class="text-muted">#123456</span>
+                        </h1>
+                        <span class="badge bg-warning text-dark border border-warning bg-opacity-25">Em andamento</span>
+                    </div>
+                </div>
+                
+                <div class="card-body p-4">
+                    <form action="{{ url_for('pedidos.editar_pedido') }}" method="POST">
+                        
+                        <div class="mb-4">
+                            <label for="cliente" class="form-label fw-semibold">Nome do Cliente</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light border-end-0">
+                                    <i class="bi bi-person text-secondary"></i>
+                                </span>
+                                <input type="text" class="form-control border-start-0 ps-0" id="cliente" name="cliente" value="Ana Silva" required>
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label for="email" class="form-label fw-semibold">Email do Cliente</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light border-end-0">
+                                    <i class="bi bi-envelope text-secondary"></i>
+                                </span>
+                                <input type="email" class="form-control border-start-0 ps-0" id="email" name="email" value="ana@exemplo.com" required>
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label for="descricao" class="form-label fw-semibold">Descrição do Pedido</label>
+                            <textarea class="form-control" id="descricao" name="descricao" rows="4" required>Fabricação de 50 unidades da peça modelo X-200.
+Material: Aço Inoxidável 304.
+Acabamento: Polido.
+
+Observação: Entregar embalado individualmente.</textarea>
+                            <div class="form-text">Edite os detalhes, materiais e dimensões.</div>
+                        </div>
+
+                        <div class="row g-3 mb-4">
+                            <div class="col-md-4">
+                                <label for="prazo" class="form-label fw-semibold">Prazo de Entrega</label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-light border-end-0">
+                                        <i class="bi bi-calendar-event text-secondary"></i>
+                                    </span>
+                                    <input type="date" class="form-control border-start-0 ps-0" id="prazo" name="prazo" value="2025-03-30" required>
+                                </div>
+                            </div>
+
+                            <div class="col-md-4">
+                                <label for="prioridade" class="form-label fw-semibold">Prioridade</label>
+                                <select class="form-select" id="prioridade" name="prioridade">
+                                    <option value="baixa">Baixa</option>
+                                    <option value="normal">Normal</option>
+                                    <option value="alta" selected>Alta</option> <option value="urgente">Urgente</option>
+                                </select>
+                            </div>
+
+                            <div class="col-md-4">
+                                <label for="status" class="form-label fw-semibold">Status Atual</label>
+                                <select class="form-select" id="status" name="status">
+                                    <option value="Pendente">Pendente</option>
+                                    <option value="Em andamento" selected>Em andamento</option> <option value="Concluído">Concluído</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-5 border-top pt-4">
+                            <a href="{{ url_for('pedidos.detalhes_pedido') }}" class="btn btn-light border px-4">Cancelar</a>
+                            <button type="submit" class="btn btn-primary px-4 fw-semibold shadow-sm">
+                                <i class="bi bi-save me-1"></i> Salvar Alterações
+                            </button>
+                        </div>
+
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+{% endblock %}
