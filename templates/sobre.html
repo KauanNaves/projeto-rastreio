@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+{% block title %}Sobre o Projeto{% endblock %}
+
+{% block extra_styles %}
+<link rel="stylesheet" href="{{ url_for('static', filename='sobre.css') }}" />
+{% endblock %}
+
+{% block content %}
+
+<section class="container py-5">
+    
+    <div class="text-center mb-5">
+        <div class="d-inline-flex align-items-center justify-content-center bg-primary bg-opacity-10 text-primary rounded-circle mb-3" style="width: 80px; height: 80px;">
+            <i class="bi bi-box-seam-fill fs-1"></i>
+        </div>
+        <h1 class="display-5 fw-bold text-dark mb-3">Sobre o FabTrack</h1>
+        <p class="lead text-muted mx-auto" style="max-width: 700px;">
+            Uma solução moderna e simplificada para gestão de pequenas fábricas e oficinas. 
+            Acompanhe pedidos do início ao fim com eficiência.
+        </p>
+    </div>
+
+    <div class="card border-0 shadow-sm mb-5 overflow-hidden">
+        <div class="row g-0">
+            <div class="col-md-6 bg-primary text-white p-5 d-flex flex-column justify-content-center">
+                <h3 class="fw-bold mb-4">Nossa Missão</h3>
+                <p class="fs-5 mb-4 opacity-75">
+                    Eliminar planilhas confusas e anotações em papel. O FabTrack foi criado para centralizar o fluxo de trabalho, permitindo que gestores foquem no que realmente importa: a qualidade da produção.
+                </p>
+                <div>
+                    <a href="{{ url_for('pedidos.novo_pedido') }}" class="btn btn-light text-primary fw-bold px-4 py-2 rounded-pill">
+                        Criar meu primeiro pedido
+                    </a>
+                </div>
+            </div>
+            <div class="col-md-6 p-5 bg-white d-flex align-items-center">
+                <div>
+                    <h4 class="fw-bold text-dark mb-4">Principais Recursos</h4>
+                    
+                    <div class="d-flex mb-4">
+                        <div class="flex-shrink-0">
+                            <i class="bi bi-check-circle-fill text-success fs-4"></i>
+                        </div>
+                        <div class="ms-3">
+                            <h5 class="fw-bold mb-1">Rastreamento Visual</h5>
+                            <p class="text-muted small mb-0">Timeline intuitiva para saber exatamente o status de cada pedido.</p>
+                        </div>
+                    </div>
+
+                    <div class="d-flex mb-4">
+                        <div class="flex-shrink-0">
+                            <i class="bi bi-check-circle-fill text-success fs-4"></i>
+                        </div>
+                        <div class="ms-3">
+                            <h5 class="fw-bold mb-1">Histórico Organizado</h5>
+                            <p class="text-muted small mb-0">Nunca mais perca informações de um cliente ou prazo antigo.</p>
+                        </div>
+                    </div>
+
+                    <div class="d-flex">
+                        <div class="flex-shrink-0">
+                            <i class="bi bi-check-circle-fill text-success fs-4"></i>
+                        </div>
+                        <div class="ms-3">
+                            <h5 class="fw-bold mb-1">Feedback Integrado</h5>
+                            <p class="text-muted small mb-0">Sistema de avaliação para medir a satisfação dos seus clientes.</p>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+{% endblock %}

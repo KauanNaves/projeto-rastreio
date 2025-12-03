@@ -1,0 +1,22 @@
+/* Cards de Tecnologia */
+.tech-card {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.tech-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.1) !important;
+    border-color: var(--cor-primaria) !important; /* Borda azul suave no hover */
+}
+
+/* Ajustes de tipografia para o cabeçalho */
+h1.display-5 {
+    letter-spacing: -1px; /* Deixa o título mais compacto e moderno */
+}
+
+/* Responsividade para o card principal 'Mission' */
+@media (max-width: 768px) {
+    .card .row .col-md-6 {
+        padding: 2rem !important; /* Reduz padding em telas pequenas */
+    }
+}
