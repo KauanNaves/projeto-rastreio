@@ -2,7 +2,7 @@
 {% block title %}Novo Pedido{% endblock %} 
 
 {% block extra_styles %}
-<link rel="stylesheet" href="../static/novo_pedido.css" />
+<link rel="stylesheet" href="{{ url_for('static', filename='novo_pedido.css') }}" />
 {% endblock %}
 
 {% block content %}
@@ -26,7 +26,6 @@
                 
                 <div class="card-body p-4">
                     <form action="{{ url_for('pedidos.novo_pedido') }}" method="POST">
-                        
                         <div class="mb-4">
                             <label for="cliente" class="form-label fw-semibold">Nome do Cliente</label>
                             <div class="input-group">
@@ -34,6 +33,16 @@
                                     <i class="bi bi-person text-secondary"></i>
                                 </span>
                                 <input type="text" class="form-control border-start-0 ps-0" id="cliente" name="cliente" placeholder="Ex: Ana Silva" required>
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label for="cliente" class="form-label fw-semibold">Email do Cliente</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light border-end-0">
+                                    <i class="bi bi-person text-secondary"></i>
+                                </span>
+                                <input type="email" class="form-control border-start-0 ps-0" id="cliente" name="cliente" placeholder="Ex: anasilva@email.com" required>
                             </div>
                         </div>
 
