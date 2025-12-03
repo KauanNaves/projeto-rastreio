@@ -1,0 +1,18 @@
+/* Ajustes para a Timeline visual */
+.progress {
+    overflow: visible; /* Permite que os botões (steps) fiquem acima da barra */
+    background-color: #e9ecef;
+}
+
+/* Remove o clique dos botões da timeline, já que são apenas visuais */
+.progress-bar + div button {
+    cursor: default;
+    box-shadow: 0 0 0 4px #fff; /* Cria uma borda branca ao redor da bolinha para separá-la da linha */
+    z-index: 2;
+}
+
+/* Estilo para a descrição com quebra de linha preservada */
+.card-text {
+    font-size: 0.95rem;
+    line-height: 1.6;
+}

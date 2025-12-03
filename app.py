@@ -1,17 +1,18 @@
 from flask import Flask, render_template
 from livereload import Server
 from routes.usuarios import usuarios
+from routes.main import main
+from routes.pedidos import pedidos
 
 app = Flask(__name__)
 
 # Configuração para que o Flask saiba que deve atualizar os templates
 app.config['TEMPLATES_AUTO_RELOAD'] = True
 
-@app.route("/")
-def index():
-    return render_template("index.html")
 
+app.register_blueprint(main)
 app.register_blueprint(usuarios)
+app.register_blueprint(pedidos)
 
 if __name__ == "__main__":
     # Cria o servidor Livereload conectando ao seu app Flask

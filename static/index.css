@@ -1,0 +1,22 @@
+@charset "UTF-8";
+
+/* A maioria do layout agora é gerenciada pelo Bootstrap Grid no HTML,
+   então este arquivo foca apenas em refinos visuais específicos. */
+
+/* Efeito de hover no card */
+.card-hover {
+    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+    background-color: #fff;
+}
+
+.card-hover:hover {
+    transform: translateY(-5px); /* Move o card levemente para cima */
+    box-shadow: 0 .5rem 1rem rgba(0,0,0,.15) !important;
+}
+
+/* Garante que o título da página tenha espaçamento correto em mobile */
+@media (max-width: 768px) {
+    #container-pedidos h1 {
+        font-size: 1.5rem;
+    }
+}

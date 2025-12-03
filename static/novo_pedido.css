@@ -1,0 +1,28 @@
+/* Remove a borda azul padrão de foco do navegador e aplica uma sombra suave */
+.form-control:focus, .form-select:focus {
+    box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.15);
+    border-color: #86b7fe;
+}
+
+/* Ajuste visual para inputs com ícones (Input Group) */
+.input-group-text {
+    background-color: #fff; /* Fundo branco para mesclar com o input */
+    border-right: none;
+}
+
+.input-group .form-control {
+    border-left: none;
+}
+
+/* Quando o grupo de input recebe foco, destaca a borda inteira visualmente */
+.input-group:focus-within .input-group-text,
+.input-group:focus-within .form-control {
+    border-color: #86b7fe;
+    z-index: 3;
+}
+
+/* Estilo sutil para o textarea */
+textarea.form-control {
+    resize: vertical; /* Permite redimensionar apenas verticalmente */
+    min-height: 100px;
+}
