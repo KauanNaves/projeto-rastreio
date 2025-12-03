@@ -1,0 +1,86 @@
+@charset "UTF-8";
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: "Poppins", sans-serif;
+}
+
+body {
+    background-image: url('background-login.jpg');
+}
+
+main {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+section#container-title {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 30px;   
+}
+
+section#container-title h1 {
+    font-size: 40px;
+    margin-bottom: 10px;
+    color: #ffffff;
+}
+
+section#container-title p {
+    font-size: 20px;
+    color: #ffffff;
+}
+
+section#container-form {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background-color: #ffffff;
+    width: 400px;
+    height: 400px;
+    border-radius: 10px;
+    box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+form > div {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+form label, input {
+    width: 300px;
+}
+
+form a {
+    text-decoration: none;
+    color: blue;
+    margin-top: 10px;
+    font-size: 13px;
+}
+
+form a:hover {
+    text-decoration: underline;
+    font-size: 15px;
+    transition-duration: 0.2s;
+}
+
+div#container-link-forgot {
+    padding: 10px;
+}
