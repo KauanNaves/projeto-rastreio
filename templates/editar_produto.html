@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% block title %}Editar Produto{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <div class="card border-0 shadow-sm">
+            <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
+                <h1 class="h4 fw-bold text-primary mb-0">Editar Produto</h1>
+                <span class="badge bg-secondary">ID: {{ produto.id }}</span>
+            </div>
+            <div class="card-body p-4">
+                <form action="{{ url_for('produtos.editar_produto', id=produto.id) }}" method="POST">
+                    
+                    <div class="row mb-3">
+                        <div class="col-md-8">
+                            <label class="form-label fw-bold">Nome do Produto</label>
+                            <input type="text" class="form-control" name="nome" value="{{ produto.nome }}" required>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label fw-bold">Estoque Atual</label>
+                            <input type="number" class="form-control" name="estoque" min="0" value="{{ produto.estoque_atual }}" required>
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label fw-bold">Definição de Processo (Etapas)</label>
+                        <p class="small text-muted mb-2">Altere a ordem ou os nomes separando por vírgula.</p>
+                        
+                        <textarea class="form-control" name="etapas" rows="3" required>{{ etapas_texto }}</textarea>
+                        <div class="form-text text-danger">
+                            <i class="bi bi-exclamation-triangle"></i> Atenção: Alterar as etapas pode afetar pedidos em andamento que usam este roteiro.
+                        </div>
+                    </div>
+
+                    <div class="d-flex justify-content-end gap-2">
+                        <a href="{{ url_for('produtos.lista') }}" class="btn btn-light border">Cancelar</a>
+                        <button type="submit" class="btn btn-primary fw-bold">Salvar Alterações</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

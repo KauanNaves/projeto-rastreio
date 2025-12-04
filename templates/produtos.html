@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+{% block title %}Gerenciar Produtos{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h1 class="h3 fw-bold text-primary">Catálogo & Estoque</h1>
+        <p class="text-muted">Gerencie seus produtos e etapas de produção.</p>
+    </div>
+    <a href="{{ url_for('produtos.novo_produto') }}" class="btn btn-primary shadow-sm">
+        <i class="bi bi-plus-lg me-1"></i> Cadastrar Produto
+    </a>
+</div>
+
+<div class="card border-0 shadow-sm">
+    <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0">
+            <thead class="bg-light">
+                <tr>
+                    <th class="ps-4">Produto</th>
+                    <th class="text-center">Estoque Atual</th>
+                    <th>Etapas de Produção (Qualidade)</th>
+                    <th class="text-end pe-4">Ações</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for p in produtos %}
+                <tr>
+                    <td class="ps-4">
+                        <div class="fw-bold text-dark">{{ p.nome }}</div>
+                        <span class="small text-muted">ID: #{{ p.id }}</span>
+                    </td>
+                    <td class="text-center">
+                        {% if p.estoque_atual > 10 %}
+                            <span class="badge bg-success bg-opacity-10 text-success border border-success px-3 rounded-pill">{{ p.estoque_atual }} un</span>
+                        {% elif p.estoque_atual > 0 %}
+                            <span class="badge bg-warning bg-opacity-10 text-warning border border-warning px-3 rounded-pill">{{ p.estoque_atual }} un</span>
+                        {% else %}
+                            <span class="badge bg-danger bg-opacity-10 text-danger border border-danger px-3 rounded-pill">Esgotado</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <div class="d-flex flex-wrap gap-1">
+                            {% for etapa in p.etapas %}
+                                <span class="badge bg-light text-secondary border">{{ loop.index }}. {{ etapa }}</span>
+                            {% endfor %}
+                        </div>
+                    </td>
+                    <td class="text-end pe-4">
+                        <a href="{{ url_for('produtos.editar_produto', id=p.id) }}" class="btn btn-sm btn-outline-primary" title="Editar Produto">
+                            <i class="bi bi-pencil"></i>
+                        </a>
+                    </td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="4" class="text-center py-5 text-muted">
+                        Nenhum produto cadastrado. Comece adicionando itens ao estoque.
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% block title %}Novo Produto{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <div class="card border-0 shadow-sm">
+            <div class="card-header bg-white py-3">
+                <h1 class="h4 fw-bold text-primary mb-0">Cadastrar Produto</h1>
+            </div>
+            <div class="card-body p-4">
+                <form action="{{ url_for('produtos.novo_produto') }}" method="POST">
+                    
+                    <div class="row mb-3">
+                        <div class="col-md-8">
+                            <label class="form-label fw-bold">Nome do Produto</label>
+                            <input type="text" class="form-control" name="nome" placeholder="Ex: Chapa de Aço 10mm" required>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label fw-bold">Estoque Inicial</label>
+                            <input type="number" class="form-control" name="estoque" min="0" value="0" required>
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label fw-bold">Definição de Processo (Etapas)</label>
+                        <p class="small text-muted mb-2">Insira as etapas de produção separadas por vírgula. Ex: <em>Corte, Solda, Pintura, Inspeção</em></p>
+                        
+                        <textarea class="form-control" name="etapas" rows="3" placeholder="Digite as etapas aqui..." required></textarea>
+                        <div class="form-text">Estas etapas aparecerão na barra de progresso do pedido.</div>
+                    </div>
+
+                    <div class="d-flex justify-content-end gap-2">
+                        <a href="{{ url_for('produtos.lista') }}" class="btn btn-light border">Cancelar</a>
+                        <button type="submit" class="btn btn-primary fw-bold">Salvar Produto</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

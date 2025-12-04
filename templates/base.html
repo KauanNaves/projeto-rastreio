@@ -36,9 +36,27 @@
 
                 <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
                     <ul class="navbar-nav align-items-center gap-3">
-                      <li class="nav-item"><a class="nav-link text-white" href="{{  url_for('main.index')}}">Home</a></li>
-                      <li class="nav-item"><a class="nav-link text-white" href="{{  url_for('main.sobre')}}">Sobre</a></li>
                       <li class="nav-item">
+                          <a class="nav-link text-white" href="{{ url_for('main.index') }}">Início</a>
+                      </li>
+                      
+                      <li class="nav-item">
+                          <a class="nav-link text-white fw-semibold" href="{{ url_for('produtos.lista') }}">
+                              <i class="bi bi-tools me-1"></i> Produtos & Estoque
+                          </a>
+                      </li>
+
+                      <li class="nav-item">
+                          <a class="nav-link text-white opacity-75" href="{{ url_for('main.sobre') }}">Sobre</a>
+                      </li>
+
+                      <li class="nav-item">
+    <a class="nav-link text-white fw-semibold" href="{{ url_for('pedidos.lista_feedbacks') }}">
+        <i class="bi bi-graph-up-arrow me-1"></i> Feedbacks
+    </a>
+</li>
+                      
+                      <li class="nav-item ms-lg-2">
                           <a class="btn btn-outline-light btn-sm px-4" href="{{ url_for('usuarios.logout') }}">Sair</a>
                       </li>
                     </ul>
@@ -51,7 +69,7 @@
         <main class="container my-4">
             {% with messages = get_flashed_messages() %}
                 {% if messages %}
-                    <div class="alert alert-info alert-dismissible fade show" role="alert">
+                    <div class="alert alert-info alert-dismissible fade show shadow-sm" role="alert">
                         {% for message in messages %}
                             {{ message }}
                         {% endfor %}
@@ -64,9 +82,9 @@
             {% endblock %}
         </main>
 
-        <footer>
-          <div class="container">
-                <p class="m-0">&copy; FabTrack 2025 - Projeto de Extensão SENAI.</p>
+        <footer class="mt-auto py-3 bg-light">
+          <div class="container text-center">
+                <p class="m-0 text-muted small">&copy; FabTrack 2025 - Projeto de Extensão SENAI.</p>
           </div>
         </footer>
     </div>

@@ -5,6 +5,7 @@ from routes.main import main
 from routes.pedidos import pedidos
 import os
 import database.database as db
+from routes.produtos import produtos_bp
 
 app = Flask(__name__)
 
@@ -16,6 +17,7 @@ app.secret_key = 'senai_qualidade_dev_secret_key'
 app.register_blueprint(main)
 app.register_blueprint(usuarios)
 app.register_blueprint(pedidos)
+app.register_blueprint(produtos_bp)
 
 if not os.path.exists('database.db'):
     with app.app_context():

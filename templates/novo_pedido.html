@@ -1,71 +1,71 @@
 {% extends "base.html" %}
 {% block title %}Novo Pedido{% endblock %} 
 
-{% block extra_styles %}
-<link rel="stylesheet" href="{{ url_for('static', filename='novo_pedido.css') }}" />
-{% endblock %}
-
 {% block content %}
-
 <section class="container py-4">
     <div class="row justify-content-center">
-        <div class="col-lg-8 col-xl-7">
+        <div class="col-lg-8">
             
             <div class="mb-3">
-                <a href="{{ url_for('main.index') }}" class="text-decoration-none text-secondary d-flex align-items-center gap-2">
-                    <i class="bi bi-arrow-left"></i> Voltar para Meus Pedidos
+                <a href="{{ url_for('main.index') }}" class="text-decoration-none text-secondary">
+                    <i class="bi bi-arrow-left"></i> Voltar
                 </a>
             </div>
 
             <div class="card border-0 shadow-sm">
-                <div class="card-header bg-white border-bottom py-3">
-                    <h1 class="h4 fw-bold text-primary mb-0 d-flex align-items-center gap-2">
-                        <i class="bi bi-plus-circle-fill"></i> Criar Novo Pedido
-                    </h1>
+                <div class="card-header bg-white py-3">
+                    <h1 class="h4 fw-bold text-primary mb-0">Novo Pedido de Produção</h1>
                 </div>
                 
                 <div class="card-body p-4">
                     <form action="{{ url_for('pedidos.novo_pedido') }}" method="POST">
-                        <div class="mb-4">
-                            <label for="cliente" class="form-label fw-semibold">Nome do Cliente</label>
-                            <div class="input-group">
-                                <span class="input-group-text bg-light border-end-0">
-                                    <i class="bi bi-person text-secondary"></i>
-                                </span>
-                                <input type="text" class="form-control border-start-0 ps-0" id="cliente" name="cliente" placeholder="Ex: Ana Silva" required>
+                        
+                        <div class="row mb-4">
+                            <div class="col-md-8">
+                                <label for="produto_id" class="form-label fw-semibold">Produto / Item</label>
+                                <select class="form-select" name="produto_id" required>
+                                    <option value="" selected disabled>Selecione um produto do estoque...</option>
+                                    {% for p in produtos %}
+                                        <option value="{{ p.id }}">
+                                            {{ p.nome }} (Disponível: {{ p.estoque_atual }})
+                                        </option>
+                                    {% endfor %}
+                                </select>
+                                {% if not produtos %}
+                                    <div class="text-danger small mt-1">
+                                        Nenhum produto cadastrado. <a href="{{ url_for('produtos.novo_produto') }}">Cadastre aqui</a>.
+                                    </div>
+                                {% endif %}
+                            </div>
+                            <div class="col-md-4">
+                                <label for="quantidade" class="form-label fw-semibold">Quantidade</label>
+                                <input type="number" class="form-control" name="quantidade" min="1" value="1" required>
                             </div>
                         </div>
 
-                        <div class="mb-4">
-                            <label for="cliente" class="form-label fw-semibold">Email do Cliente</label>
-                            <div class="input-group">
-                                <span class="input-group-text bg-light border-end-0">
-                                    <i class="bi bi-person text-secondary"></i>
-                                </span>
-                                <input type="email" class="form-control border-start-0 ps-0" id="email" name="email" placeholder="Ex: anasilva@email.com" required>
-                            </div>
-                        </div>
+                        <hr class="my-4 text-muted opacity-25">
 
-                        <div class="mb-4">
-                            <label for="descricao" class="form-label fw-semibold">Descrição do Pedido</label>
-                            <textarea class="form-control" id="descricao" name="descricao" rows="4" placeholder="Descreva os detalhes do pedido aqui..." required></textarea>
-                            <div class="form-text">Seja específico sobre materiais e dimensões.</div>
-                        </div>
+                        <h5 class="mb-3 text-secondary">Dados do Cliente</h5>
 
-                        <div class="row g-3 mb-4">
+                        <div class="row mb-3">
                             <div class="col-md-6">
-                                <label for="prazo" class="form-label fw-semibold">Prazo de Entrega</label>
-                                <div class="input-group">
-                                    <span class="input-group-text bg-light border-end-0">
-                                        <i class="bi bi-calendar-event text-secondary"></i>
-                                    </span>
-                                    <input type="date" class="form-control border-start-0 ps-0" id="prazo" name="prazo" required>
-                                </div>
+                                <label class="form-label fw-semibold">Nome do Cliente</label>
+                                <input type="text" class="form-control" name="cliente" required>
                             </div>
                             <div class="col-md-6">
-                                <label for="prioridade" class="form-label fw-semibold">Prioridade</label>
-                                <select class="form-select" id="prioridade" name="prioridade">
-                                    <option value="baixa">Baixa</option>
+                                <label class="form-label fw-semibold">Email</label>
+                                <input type="email" class="form-control" name="email">
+                            </div>
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold">Prazo de Entrega</label>
+                                <input type="date" class="form-control" name="prazo" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold">Prioridade</label>
+                                <select class="form-select" name="prioridade">
                                     <option value="normal" selected>Normal</option>
                                     <option value="alta">Alta</option>
                                     <option value="urgente">Urgente</option>
@@ -73,10 +73,14 @@
                             </div>
                         </div>
 
-                        <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-5">
-                            <a href="{{ url_for('main.index') }}" class="btn btn-light border px-4">Cancelar</a>
-                            <button type="submit" class="btn btn-primary px-4 fw-semibold">
-                                <i class="bi bi-check-lg me-1"></i> Salvar Pedido
+                        <div class="mb-4">
+                            <label class="form-label fw-semibold">Observações Adicionais (Opcional)</label>
+                            <textarea class="form-control" name="descricao" rows="2" placeholder="Detalhes específicos para customização..."></textarea>
+                        </div>
+
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                            <button type="submit" class="btn btn-success px-5 fw-bold shadow-sm">
+                                <i class="bi bi-check-lg me-1"></i> Confirmar Pedido
                             </button>
                         </div>
 
@@ -86,5 +90,4 @@
         </div>
     </div>
 </section>
-
 {% endblock %}

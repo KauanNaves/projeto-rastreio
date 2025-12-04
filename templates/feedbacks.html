@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+{% block title %}Feedbacks de Clientes{% endblock %}
+
+{% block content %}
+<div class="mb-4">
+    <h1 class="h3 fw-bold text-primary">Satisfação do Cliente</h1>
+    <p class="text-muted">Monitoramento de qualidade pós-entrega.</p>
+</div>
+
+<div class="row mb-5">
+    <div class="col-md-6">
+        <div class="card border-0 shadow-sm bg-primary text-white h-100">
+            <div class="card-body d-flex align-items-center justify-content-between p-4">
+                <div>
+                    <h6 class="text-uppercase opacity-75 fw-bold ls-1 mb-1">Média de Avaliação</h6>
+                    <div class="display-4 fw-bold">{{ media }} <span class="fs-4 opacity-50">/ 5.0</span></div>
+                </div>
+                <div class="text-end">
+                    <i class="bi bi-star-half display-1 opacity-25"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card border-0 shadow-sm h-100">
+            <div class="card-body d-flex align-items-center justify-content-between p-4">
+                <div>
+                    <h6 class="text-uppercase text-muted fw-bold ls-1 mb-1">Total de Respostas</h6>
+                    <div class="display-4 fw-bold text-dark">{{ total }}</div>
+                </div>
+                <div class="text-end">
+                    <i class="bi bi-chat-quote-fill display-1 text-secondary opacity-25"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card border-0 shadow-sm">
+    <div class="card-header bg-white py-3">
+        <h5 class="mb-0 fw-bold text-secondary">Últimas Avaliações Recebidas</h5>
+    </div>
+    <div class="list-group list-group-flush">
+        {% for f in feedbacks %}
+        <div class="list-group-item p-4">
+            <div class="d-flex w-100 justify-content-between align-items-start mb-2">
+                <div>
+                    <div class="text-warning mb-1">
+                        {% for i in range(1, 6) %}
+                            {% if i <= f.avaliacao_nota %}
+                                <i class="bi bi-star-fill"></i>
+                            {% else %}
+                                <i class="bi bi-star"></i>
+                            {% endif %}
+                        {% endfor %}
+                        <span class="fw-bold text-dark ms-2">{{ f.avaliacao_nota }}.0</span>
+                    </div>
+                    <h6 class="mb-1 fw-bold">{{ f.produto_nome }}</h6>
+                    <small class="text-muted">Pedido #{{ f.numero_pedido }} • Cliente: {{ f.cliente_nome }}</small>
+                </div>
+                <small class="text-muted text-end">
+                    Processo Encerrado
+                </small>
+            </div>
+            
+            {% if f.avaliacao_obs %}
+            <div class="bg-light p-3 rounded mt-3">
+                <i class="bi bi-quote text-secondary fs-4 me-2"></i>
+                <span class="fst-italic text-dark">{{ f.avaliacao_obs }}</span>
+            </div>
+            {% else %}
+            <p class="mb-1 text-muted small mt-2"><em>(Cliente não deixou comentário por escrito)</em></p>
+            {% endif %}
+        </div>
+        {% else %}
+        <div class="text-center py-5">
+            <p class="text-muted mb-0">Nenhum feedback recebido ainda.</p>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

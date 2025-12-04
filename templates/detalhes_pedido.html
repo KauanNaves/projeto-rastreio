@@ -1,280 +1,195 @@
-{% extends "base.html" %} {% block title %}Detalhes do Pedido{% endblock %} {%
-block extra_styles %} {# Ajustei o caminho do CSS para garantir que carregue #}
-<link
-  rel="stylesheet"
-  href="{{ url_for('static', filename='detalhes_pedido.css') }}"
-/>
-{% endblock %} {% block content %}
+{% extends "base.html" %} 
+{% block title %}Detalhes do Pedido #{{ pedido.numero_pedido }}{% endblock %} 
 
-<section class="container py-4">
-  <div class="mb-4">
-    <a
-      href="{{ url_for('main.index') }}"
-      class="text-decoration-none text-secondary d-flex align-items-center gap-2"
-    >
-      <i class="bi bi-arrow-left"></i> Voltar para Meus Pedidos
+{% block content %}
+
+<div class="mb-4">
+    <a href="{{ url_for('main.index') }}" class="text-decoration-none text-secondary">
+        <i class="bi bi-arrow-left"></i> Voltar
     </a>
-  </div>
+</div>
 
-  <div
-    class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4 gap-3"
-  >
-    <div>
-      {# TÍTULO DINÂMICO #}
-      <h1 class="h2 fw-bold text-primary mb-1 d-flex align-items-center gap-2">
-        Pedido #{{ pedido.numero_pedido }} {# STATUS DINÂMICO #} {% if
-        pedido.status == 'Concluído' %}
-        <span
-          class="badge bg-success bg-opacity-10 text-success border border-success fw-normal ms-2"
-          >{{ pedido.status }}</span
-        >
-        {% elif pedido.status == 'Em andamento' %}
-        <span
-          class="badge bg-warning bg-opacity-10 text-dark border border-warning fw-normal ms-2"
-          >{{ pedido.status }}</span
-        >
-        {% else %}
-        <span class="badge bg-light text-dark border fw-normal ms-2"
-          >{{ pedido.status }}</span
-        >
-        {% endif %}
-      </h1>
-      <p class="text-muted mb-0">Criado em {{ pedido.data_criacao }}</p>
-    </div>
-
-    <div class="d-flex gap-2">
-      {# Passamos o token para a rota de avaliar #}
-
-      <button
-        type="button"
-        class="btn btn-outline-secondary"
-        onclick="compartilharPedido()"
-      >
-        <i class="bi bi-share"></i>
-        <span class="d-none d-sm-inline">Compartilhar</span>
-      </button>
-
-      {# Passamos o token para a rota de editar #}
-      <a
-        href="{{ url_for('pedidos.editar_pedido', token=pedido.token_rastreio) }}"
-        class="btn btn-outline-primary"
-      >
-        <i class="bi bi-pencil"></i>
-        <span class="d-none d-sm-inline">Editar</span>
-      </a>
-
-      <button
-        type="button"
-        class="btn btn-outline-danger"
-        data-bs-toggle="modal"
-        data-bs-target="#modalExcluir"
-      >
-        <i class="bi bi-trash"></i>
-        <span class="d-none d-sm-inline">Excluir</span>
-      </button>
-    </div>
-  </div>
-
-  <div class="row g-4">
-    <div class="col-lg-8">
-      <div class="card border-0 shadow-sm mb-4">
-        <div class="card-header bg-white py-3 border-bottom-0">
-          <h5 class="card-title fw-bold mb-0 text-secondary">
-            <i class="bi bi-file-text me-2"></i>Descrição do Pedido
-          </h5>
-        </div>
-        <div class="card-body pt-0">
-          <div class="p-3 bg-light rounded border">
-            {# DESCRIÇÃO DINÂMICA #}
-            <p class="card-text mb-0 text-dark" style="white-space: pre-line">
-              {{ pedido.descricao }}
-            </p>
-          </div>
-        </div>
-      </div>
-
-      <div class="card border-0 shadow-sm">
-        <div class="card-header bg-white py-3">
-          <h5 class="card-title fw-bold mb-0 text-secondary">
-            <i class="bi bi-bar-chart-steps me-2"></i>Status de Produção
-          </h5>
-        </div>
-        <div class="card-body">
-          <div class="position-relative m-4 mb-3">
-            {# BARRA DE PROGRESSO DINÂMICA #}
-            <div
-              class="progress"
-              style="height: 2px; background-color: #e9ecef"
-            >
-              <div
-                class="progress-bar"
-                role="progressbar"
-                style="width: {{ progresso }}%;"
-                aria-valuenow="{{ progresso }}"
-                aria-valuemin="0"
-                aria-valuemax="100"
-              ></div>
-            </div>
-
-            {# Mantive os botões estáticos por enquanto, mas eles refletem
-            visualmente os passos #}
-            <div
-              class="d-flex justify-content-between position-absolute top-0 start-0 w-100 translate-middle-y"
-            >
-              <div class="d-flex flex-col align-items-center">
-                <button
-                  type="button"
-                  class="btn btn-sm {{ 'btn-primary' if progresso >= 10 else 'btn-secondary' }} rounded-pill"
-                  style="width: 2rem; height: 2rem"
-                >
-                  1
-                </button>
-                <span class="small text-muted mt-2">Pendente</span>
-              </div>
-              <div class="d-flex flex-col align-items-center">
-                <button
-                  type="button"
-                  class="btn btn-sm {{ 'btn-primary' if progresso >= 50 else 'btn-secondary' }} rounded-pill"
-                  style="width: 2rem; height: 2rem"
-                >
-                  2
-                </button>
-                <span class="small fw-bold mt-2">Produção</span>
-              </div>
-              <div class="d-flex flex-col align-items-center">
-                <button
-                  type="button"
-                  class="btn btn-sm {{ 'btn-primary' if progresso >= 100 else 'btn-secondary' }} rounded-pill"
-                  style="width: 2rem; height: 2rem"
-                >
-                  3
-                </button>
-                <span class="small text-muted mt-2">Concluído</span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="col-lg-4">
-      <div class="card border-0 shadow-sm h-100">
-        <div class="card-header bg-light border-bottom">
-          <h6 class="fw-bold mb-0 text-secondary">Informações Gerais</h6>
-        </div>
-        <div class="card-body p-0">
-          <ul class="list-group list-group-flush">
-            <li class="list-group-item p-3">
-              <span class="d-block text-muted small text-uppercase fw-bold mb-1"
-                >Cliente</span
-              >
-              <div class="d-flex align-items-center gap-2">
-                <div
-                  class="bg-primary bg-opacity-10 text-primary rounded-circle d-flex align-items-center justify-content-center"
-                  style="width: 32px; height: 32px"
-                >
-                  <i class="bi bi-person-fill"></i>
+<div class="row">
+    <div class="col-lg-4 mb-4">
+        <div class="card border-0 shadow-sm h-100">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-start mb-2">
+                    <span class="badge bg-primary">Pedido #{{ pedido.numero_pedido }}</span>
+                    {% if pedido.status == 'Cancelado' %}
+                        <span class="badge bg-danger">Cancelado</span>
+                    {% endif %}
                 </div>
-                {# NOME DO CLIENTE #}
-                <span class="fw-medium">{{ pedido.cliente_nome }}</span>
-              </div>
-            </li>
 
-            <li class="list-group-item p-3">
-              <span class="d-block text-muted small text-uppercase fw-bold mb-1"
-                >Prazo de Entrega</span
-              >
-              <div class="d-flex align-items-center gap-2">
-                <i class="bi bi-calendar-event text-secondary"></i>
-                {# PRAZO #}
-                <span class="fw-medium">{{ pedido.prazo_entrega }}</span>
-              </div>
-            </li>
+                <h2 class="h4 fw-bold mb-1">{{ pedido.produto_nome }}</h2>
+                <p class="text-muted">Qtd: {{ pedido.quantidade }} unidades</p>
+                
+                <hr>
+                
+                <div class="mb-3">
+                    <label class="small text-muted fw-bold">CLIENTE</label>
+                    <div class="fw-medium">{{ pedido.cliente_nome }}</div>
+                    <div class="small text-secondary">{{ pedido.cliente_email }}</div>
+                </div>
 
-            <li class="list-group-item p-3">
-              <span class="d-block text-muted small text-uppercase fw-bold mb-1"
-                >Prioridade</span
-              >
-              <div class="d-flex align-items-center gap-2">
-                {# Lógica de Cores #} {% if pedido.prioridade in ['alta',
-                'urgente'] %}
-                <i class="bi bi-flag-fill text-danger"></i>
-                <span class="fw-bold text-danger"
-                  >{{ pedido.prioridade|capitalize }}</span
-                >
+                <div class="mb-3">
+                    <label class="small text-muted fw-bold">PRAZO</label>
+                    <div class="{{ 'text-decoration-line-through text-muted' if pedido.status == 'Cancelado' }}">
+                        {{ pedido.prazo_entrega }}
+                    </div>
+                </div>
+                
+                <div class="mb-3">
+                    <label class="small text-muted fw-bold">OBSERVAÇÕES</label>
+                    <p class="small text-dark bg-light p-2 rounded">{{ pedido.descricao }}</p>
+                </div>
 
-                {% elif pedido.prioridade == 'normal' %}
-                <i class="bi bi-flag-fill text-primary"></i>
-                <span class="fw-bold text-primary"
-                  >{{ pedido.prioridade|capitalize }}</span
-                >
+                <div class="d-grid gap-2">
+                    <button onclick="compartilhar()" class="btn btn-outline-primary btn-sm">
+                        <i class="bi bi-share"></i> Link de Rastreio
+                    </button>
+                    
+                    {% if pedido.status != 'Cancelado' %}
+                        <a href="{{ url_for('pedidos.editar_pedido', token=pedido.token_rastreio) }}" class="btn btn-outline-secondary btn-sm">
+                            <i class="bi bi-pencil"></i> Editar Dados
+                        </a>
+                    {% endif %}
+                </div>
 
-                {% else %} {# Baixa #}
-                <i class="bi bi-flag-fill text-success"></i>
-                <span class="fw-bold text-success"
-                  >{{ pedido.prioridade|capitalize }}</span
-                >
+                {% if pedido.status != 'Cancelado' %}
+                <div class="mt-4 pt-3 border-top text-center">
+                    <button type="button" class="btn btn-link text-danger btn-sm text-decoration-none" data-bs-toggle="modal" data-bs-target="#modalCancelar">
+                        <i class="bi bi-x-circle me-1"></i> Cancelar Pedido
+                    </button>
+                </div>
                 {% endif %}
-              </div>
-            </li>
-
-            <li class="list-group-item p-3">
-              <span class="d-block text-muted small text-uppercase fw-bold mb-1"
-                >Contato</span
-              >
-              {# EMAIL DO CLIENTE #}
-              <a
-                href="mailto:{{ pedido.cliente_email }}"
-                class="text-decoration-none"
-                >{{ pedido.cliente_email }}</a
-              >
-            </li>
-          </ul>
+            </div>
         </div>
-        <div class="card-footer bg-white p-3">
-          {# Formulário de Conclusão com Rota Correta #}
-          <form
-            action="{{ url_for('pedidos.concluir_pedido', token=pedido.token_rastreio) }}"
-            method="POST"
-          >
-            <button class="btn btn-success w-100">
-              <i class="bi bi-check-circle me-1"></i> Marcar como Concluído
-            </button>
-          </form>
-        </div>
-      </div>
     </div>
-  </div>
-</section>
 
-{# MODAL DE EXCLUSÃO #}
-<div class="modal fade" id="modalExcluir" tabindex="-1" aria-hidden="true">
+    <div class="col-lg-8">
+        <div class="card border-0 shadow-sm h-100">
+            <div class="card-header bg-white py-3 border-bottom">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0 fw-bold text-secondary"><i class="bi bi-gear-wide-connected me-2"></i>Controle de Produção</h5>
+                    
+                    {% if pedido.status == 'Concluído' %}
+                        <span class="badge bg-success">Concluído</span>
+                    {% elif pedido.status == 'Cancelado' %}
+                        <span class="badge bg-danger">Inativo</span>
+                    {% else %}
+                        <span class="badge bg-warning text-dark">{{ pedido.status }}</span>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <div class="card-body p-4">
+                
+                {% if pedido.status == 'Cancelado' %}
+                    <div class="text-center py-5">
+                        <i class="bi bi-slash-circle display-1 text-danger opacity-25"></i>
+                        <h4 class="mt-3 fw-bold text-danger">Produção Interrompida</h4>
+                        <p class="text-muted">Este pedido foi cancelado administrativamente e os itens retornaram ao estoque.</p>
+                    </div>
+                {% else %}
+                    <div class="progress mb-5" style="height: 25px;">
+                        <div class="progress-bar progress-bar-striped progress-bar-animated {{ 'bg-success' if pedido.status == 'Concluído' else 'bg-primary' }}" 
+                             role="progressbar" style="width: {{ progresso }}%">
+                            {{ progresso }}%
+                        </div>
+                    </div>
+
+                    <div class="position-relative ps-4 border-start border-2">
+                        
+                        {% for etapa in etapas %}
+                            {% set index = loop.index0 %}
+                            {% set is_past = index < pedido.etapa_index %}
+                            {% set is_current = index == pedido.etapa_index %}
+                            
+                            <div class="mb-4 position-relative">
+                                <div class="position-absolute top-0 start-0 translate-middle-x bg-white" style="left: -1px;">
+                                    {% if pedido.status == 'Concluído' or is_past %}
+                                        <i class="bi bi-check-circle-fill text-success fs-4"></i>
+                                    {% elif is_current and pedido.status != 'Concluído' %}
+                                        <i class="bi bi-record-circle-fill text-primary fs-4"></i>
+                                    {% else %}
+                                        <i class="bi bi-circle text-muted fs-4"></i>
+                                    {% endif %}
+                                </div>
+
+                                <div class="ps-3">
+                                    <h6 class="fw-bold mb-1 {{ 'text-muted' if not (is_past or is_current) else 'text-dark' }}">
+                                        {{ etapa }}
+                                    </h6>
+                                    
+                                    {% if is_current and pedido.status != 'Concluído' %}
+                                        <div class="alert alert-light border mt-2 shadow-sm">
+                                            <p class="small mb-2 text-secondary">
+                                                <i class="bi bi-info-circle me-1"></i> 
+                                                Verifique os critérios de qualidade para a etapa <strong>"{{ etapa }}"</strong> antes de avançar.
+                                            </p>
+                                            
+                                            <form action="{{ url_for('pedidos.avancar_etapa', token=pedido.token_rastreio) }}" method="POST">
+                                                <button type="submit" class="btn btn-primary btn-sm fw-bold">
+                                                    <i class="bi bi-check-lg"></i> Aprovar e Avançar
+                                                </button>
+                                            </form>
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        {% endfor %}
+
+                        <div class="mb-0 position-relative">
+                            <div class="position-absolute top-0 start-0 translate-middle-x bg-white">
+                                {% if pedido.status == 'Concluído' %}
+                                    <i class="bi bi-flag-fill text-success fs-4"></i>
+                                {% else %}
+                                    <i class="bi bi-flag text-muted fs-4"></i>
+                                {% endif %}
+                            </div>
+                            <div class="ps-3">
+                                <h6 class="fw-bold {{ 'text-success' if pedido.status == 'Concluído' else 'text-muted' }}">Entrega / Conclusão</h6>
+                                {% if pedido.status == 'Concluído' %}
+                                    <small class="text-success">Pedido finalizado e pronto para entrega.</small>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                    </div>
+                {% endif %}
+
+            </div>
+            
+            {% if pedido.status == 'Concluído' %}
+            <div class="card-footer bg-success bg-opacity-10 text-center py-3">
+                <h5 class="text-success fw-bold mb-0">Processo Finalizado com Sucesso!</h5>
+            </div>
+            {% endif %}
+
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="modalCancelar" tabindex="-1" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content">
       <div class="modal-header border-0 pb-0">
-        <h5 class="modal-title fw-bold">Confirmar Exclusão</h5>
-        <button
-          type="button"
-          class="btn-close"
-          data-bs-dismiss="modal"
-          aria-label="Close"
-        ></button>
+        <h5 class="modal-title fw-bold text-danger">Cancelar Pedido?</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
-        Tem certeza que deseja excluir o pedido
-        <strong>#{{ pedido.numero_pedido }}</strong>? Esta ação não pode ser
-        desfeita.
+        <p>Tem certeza que deseja <strong>Inativar/Cancelar</strong> o pedido <strong>#{{ pedido.numero_pedido }}</strong>?</p>
+        
+        <div class="alert alert-warning small">
+            <i class="bi bi-exclamation-triangle-fill me-1"></i>
+            Esta ação irá <strong>devolver {{ pedido.quantidade }} itens</strong> ao estoque do produto. O histórico será mantido.
+        </div>
       </div>
       <div class="modal-footer border-0 pt-0">
-        <button type="button" class="btn btn-light" data-bs-dismiss="modal">
-          Cancelar
-        </button>
-        {# Formulário de Exclusão com Rota Correta #}
-        <form
-          action="{{ url_for('pedidos.excluir_pedido', token=pedido.token_rastreio) }}"
-          method="post"
-        >
-          <button type="submit" class="btn btn-danger">Sim, excluir</button>
+        <button type="button" class="btn btn-light" data-bs-dismiss="modal">Voltar</button>
+        
+        <form action="{{ url_for('pedidos.cancelar_pedido_rota', token=pedido.token_rastreio) }}" method="post">
+          <button type="submit" class="btn btn-danger">Sim, cancelar pedido</button>
         </form>
       </div>
     </div>
@@ -282,64 +197,20 @@ block extra_styles %} {# Ajustei o caminho do CSS para garantir que carregue #}
 </div>
 
 <script>
-    async function compartilharPedido() {
-        // Constrói o link público
-        const token = "{{ pedido.token_rastreio }}";
-        const urlPublica = `${window.location.origin}/rastreio/${token}`;
+    function compartilhar() {
+        const url = "{{ url_for('pedidos.rastreio_publico', token=pedido.token_rastreio, _external=True) }}";
         
-        const shareData = {
-            title: 'Acompanhe seu Pedido - FabTrack',
-            text: `Olá {{ pedido.cliente_nome }}, acompanhe o status do seu pedido #${token} no link abaixo:`,
-            url: urlPublica
-        };
-
-        // 1. Tenta usar o compartilhamento nativo do celular (WhatsApp, etc)
         if (navigator.share) {
-            try {
-                await navigator.share(shareData);
-                return; // Se funcionou, para por aqui
-            } catch (err) {
-                console.log('Compartilhamento nativo cancelado ou falhou, tentando copiar...');
-            }
-        } 
-
-        // 2. Se falhar ou estiver no PC, tenta copiar para a área de transferência
-        try {
-            // Método moderno
-            await navigator.clipboard.writeText(urlPublica);
-            alert('Link PÚBLICO copiado com sucesso!\n\n' + urlPublica);
-        } catch (err) {
-            // 3. Método de emergência (Fallback) para navegadores que bloqueiam o anterior
-            copiarTextoFallback(urlPublica);
+            navigator.share({
+                title: 'Acompanhe seu Pedido',
+                text: 'Veja o status do seu pedido no FabTrack:',
+                url: url
+            }).catch(console.error);
+        } else {
+            navigator.clipboard.writeText(url).then(() => {
+                alert("Link copiado para a área de transferência:\n" + url);
+            });
         }
-    }
-
-    function copiarTextoFallback(texto) {
-        // Cria um campo de texto invisível temporário
-        const textArea = document.createElement("textarea");
-        textArea.value = texto;
-        
-        // Garante que o campo não seja visível na tela
-        textArea.style.position = "fixed";
-        textArea.style.left = "-9999px";
-        textArea.style.top = "0";
-        
-        document.body.appendChild(textArea);
-        textArea.focus();
-        textArea.select();
-
-        try {
-            const sucesso = document.execCommand('copy');
-            if (sucesso) {
-                alert('Link PÚBLICO copiado com sucesso!\n\n' + texto);
-            } else {
-                prompt("Não foi possível copiar automaticamente. Copie o link abaixo manualmente:", texto);
-            }
-        } catch (err) {
-            prompt("Copie o link abaixo manualmente:", texto);
-        }
-
-        document.body.removeChild(textArea);
     }
 </script>
 
