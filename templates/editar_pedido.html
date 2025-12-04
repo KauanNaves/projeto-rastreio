@@ -1,10 +1,6 @@
 {% extends "base.html" %}
 {% block title %}Editar Pedido #{{ pedido.numero_pedido }}{% endblock %} 
 
-{% block extra_styles %}
-<link rel="stylesheet" href="{{ url_for('static', filename='novo_pedido.css') }}" />
-{% endblock %}
-
 {% block content %}
 
 <section class="container py-4">
@@ -12,7 +8,6 @@
         <div class="col-lg-8 col-xl-7">
             
             <div class="mb-3">
-                {# Link corrigido com token #}
                 <a href="{{ url_for('pedidos.detalhes_pedido', token=pedido.token_rastreio) }}" class="text-decoration-none text-secondary d-flex align-items-center gap-2">
                     <i class="bi bi-arrow-left"></i> Cancelar e Voltar
                 </a>
@@ -28,16 +23,27 @@
                 </div>
                 
                 <div class="card-body p-4">
-                    {# Action corrigida com token #}
                     <form action="{{ url_for('pedidos.editar_pedido', token=pedido.token_rastreio) }}" method="POST">
                         
+                        <div class="alert alert-light border mb-4">
+                            <div class="row">
+                                <div class="col-md-8">
+                                    <label class="small text-muted fw-bold">PRODUTO</label>
+                                    <div class="fw-bold text-dark">{{ pedido.produto_nome }}</div>
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="small text-muted fw-bold">QUANTIDADE</label>
+                                    <div class="fw-bold text-dark">{{ pedido.quantidade }} un</div>
+                                </div>
+                            </div>
+                        </div>
+
                         <div class="mb-4">
                             <label for="cliente" class="form-label fw-semibold">Nome do Cliente</label>
                             <div class="input-group">
                                 <span class="input-group-text bg-light border-end-0">
                                     <i class="bi bi-person text-secondary"></i>
                                 </span>
-                                {# Preenchimento automático (value) #}
                                 <input type="text" class="form-control border-start-0 ps-0" id="cliente" name="cliente" value="{{ pedido.cliente_nome }}" required>
                             </div>
                         </div>
@@ -48,16 +54,14 @@
                                 <span class="input-group-text bg-light border-end-0">
                                     <i class="bi bi-envelope text-secondary"></i>
                                 </span>
-                                {# Nome do campo corrigido para 'email' e value preenchido #}
-                                <input type="email" class="form-control border-start-0 ps-0" id="email" name="email" value="{{ pedido.cliente_email }}" required>
+                                <input type="email" class="form-control border-start-0 ps-0" id="email" name="email" value="{{ pedido.cliente_email }}">
                             </div>
                         </div>
 
                         <div class="mb-4">
-                            <label for="descricao" class="form-label fw-semibold">Descrição do Pedido</label>
-                            {# Textarea usa o valor entre as tags, não atributo value #}
+                            <label for="descricao" class="form-label fw-semibold">Descrição / Observações</label>
                             <textarea class="form-control" id="descricao" name="descricao" rows="4" required>{{ pedido.descricao }}</textarea>
-                            <div class="form-text">Edite os detalhes, materiais e dimensões.</div>
+                            <div class="form-text">Edite detalhes de customização aqui.</div>
                         </div>
 
                         <div class="row g-3 mb-4">
@@ -74,7 +78,6 @@
                             <div class="col-md-4">
                                 <label for="prioridade" class="form-label fw-semibold">Prioridade</label>
                                 <select class="form-select" id="prioridade" name="prioridade">
-                                    {# Lógica para selecionar a opção correta #}
                                     <option value="baixa" {% if pedido.prioridade == 'baixa' %}selected{% endif %}>Baixa</option>
                                     <option value="normal" {% if pedido.prioridade == 'normal' %}selected{% endif %}>Normal</option>
                                     <option value="alta" {% if pedido.prioridade == 'alta' %}selected{% endif %}>Alta</option>
@@ -83,12 +86,10 @@
                             </div>
 
                             <div class="col-md-4">
-                                <label for="status" class="form-label fw-semibold">Status Atual</label>
-                                <select class="form-select" id="status" name="status">
-                                    <option value="Pendente" {% if pedido.status == 'Pendente' %}selected{% endif %}>Pendente</option>
-                                    <option value="Em andamento" {% if pedido.status == 'Em andamento' %}selected{% endif %}>Em andamento</option>
-                                    <option value="Concluído" {% if pedido.status == 'Concluído' %}selected{% endif %}>Concluído</option>
-                                </select>
+                                <label for="status_display" class="form-label fw-semibold">Status Atual</label>
+                                <input type="text" class="form-control bg-light" id="status_display" value="{{ pedido.status }}" disabled readonly>
+                                <input type="hidden" name="status" value="{{ pedido.status }}">
+                                <div class="form-text small">O status deve ser alterado pelo Painel de Controle.</div>
                             </div>
                         </div>
 

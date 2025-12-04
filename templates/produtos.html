@@ -47,14 +47,46 @@
                         </div>
                     </td>
                     <td class="text-end pe-4">
-                        <a href="{{ url_for('produtos.editar_produto', id=p.id) }}" class="btn btn-sm btn-outline-primary" title="Editar Produto">
-                            <i class="bi bi-pencil"></i>
-                        </a>
+                        <div class="d-flex justify-content-end gap-2">
+                            <a href="{{ url_for('produtos.editar_produto', id=p.id) }}" class="btn btn-sm btn-outline-primary" title="Editar Produto">
+                                <i class="bi bi-pencil"></i>
+                            </a>
+                            
+                            <button type="button" class="btn btn-sm btn-outline-danger" data-bs-toggle="modal" data-bs-target="#modalExcluir{{ p.id }}" title="Excluir Produto">
+                                <i class="bi bi-trash"></i>
+                            </button>
+                        </div>
+
+                        <div class="modal fade text-start" id="modalExcluir{{ p.id }}" tabindex="-1" aria-hidden="true">
+                            <div class="modal-dialog modal-dialog-centered">
+                                <div class="modal-content">
+                                    <div class="modal-header border-0 pb-0">
+                                        <h5 class="modal-title fw-bold text-danger">Excluir Produto?</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <p>Tem certeza que deseja remover <strong>{{ p.nome }}</strong> do catálogo?</p>
+                                        <p class="small text-muted mb-0">
+                                            <i class="bi bi-info-circle me-1"></i>
+                                            Se houver pedidos vinculados a este produto, a exclusão será bloqueada por segurança.
+                                        </p>
+                                    </div>
+                                    <div class="modal-footer border-0 pt-0">
+                                        <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancelar</button>
+                                        
+                                        <form action="{{ url_for('produtos.excluir_produto_rota', id=p.id) }}" method="POST">
+                                            <button type="submit" class="btn btn-danger">Sim, excluir</button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
                     </td>
                 </tr>
                 {% else %}
                 <tr>
-                    <td colspan="4" class="text-center py-5 text-muted">
+                    <td colspan="4" class="text-center py-5 text-muted w-100">
                         Nenhum produto cadastrado. Comece adicionando itens ao estoque.
                     </td>
                 </tr>

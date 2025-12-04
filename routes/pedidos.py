@@ -71,18 +71,32 @@ def detalhes_pedido(token):
     pedido = db.buscar_pedido(token)
     if not pedido: return "Não encontrado", 404
 
+    # --- CORREÇÃO DE SEGURANÇA ---
+    # Verifica se existem etapas antes de tentar converter o JSON
+    etapas = []
+    if pedido['etapas_json']:
+        try:
+            etapas = json.loads(pedido['etapas_json'])
+        except:
+            etapas = ["Erro ao carregar etapas"]
+    else:
+        # Se o produto foi excluído, definimos uma lista padrão para não quebrar a tela
+        etapas = ["Produto Excluído / Histórico Indisponível"]
+
     # Lógica de Progresso Dinâmico
-    etapas = json.loads(pedido['etapas_json'])
     total_etapas = len(etapas)
     etapa_atual_index = pedido['etapa_index']
     
-    # Se index for 0 -> progresso baixo. Se for igual ao len -> 100%
     progresso = 0
     if total_etapas > 0:
         progresso = int(((etapa_atual_index + 1) / total_etapas) * 100)
-        if pedido['status'] == 'Concluído': progresso = 100
+        
+    # Garante 100% visual se estiver concluído
+    if pedido['status'] == 'Concluído': 
+        progresso = 100
 
     return render_template('detalhes_pedido.html', pedido=pedido, progresso=progresso, etapas=etapas)
+
 
 @pedidos.route('/avancar_etapa/<token>', methods=['POST'])
 def avancar_etapa(token):
@@ -120,6 +134,49 @@ def lista_feedbacks():
     return render_template('feedbacks.html', feedbacks=feedbacks, total=total, media=media)
 
 
+@pedidos.route('/cancelar_pedido/<token>', methods=['POST'])
+def cancelar_pedido_rota(token):
+    if 'user_id' not in session:
+        return redirect(url_for('usuarios.login'))
+
+    # Chama a nova lógica de estorno e cancelamento
+    db.cancelar_pedido(token)
+    
+    flash("Pedido cancelado e itens estornados ao estoque.")
+    return redirect(url_for('pedidos.detalhes_pedido', token=token))
+
+
+@pedidos.route('/editar_pedido/<token>', methods=['GET', 'POST'])
+def editar_pedido(token):
+    if 'user_id' not in session:
+        return redirect(url_for('usuarios.login'))
+
+    pedido = db.buscar_pedido(token)
+    if not pedido:
+        flash('Pedido não encontrado.')
+        return redirect(url_for('main.index'))
+
+    if request.method == 'POST':
+        cliente = request.form.get('cliente')
+        email = request.form.get('email')
+        descricao = request.form.get('descricao')
+        prazo = request.form.get('prazo')
+        prioridade = request.form.get('prioridade')
+        
+        # Mantemos o status atual para não quebrar a lógica das etapas
+        # Se quiser permitir mudar status manualmente, pegue do form: request.form.get('status')
+        status = request.form.get('status') 
+
+        try:
+            db.atualizar_pedido(token, cliente, email, descricao, status, prioridade, prazo)
+            flash('Pedido atualizado com sucesso!')
+            return redirect(url_for('pedidos.detalhes_pedido', token=token))
+        except Exception as e:
+            flash(f"Erro ao atualizar: {e}")
+
+    return render_template('editar_pedido.html', pedido=pedido)
+
+
 # Rotas públicas (rastreio e avaliar) mantêm-se similares, 
 # apenas precisam calcular o progresso igual fiz em detalhes_pedido
 @pedidos.route('/rastreio/<token>')
@@ -127,11 +184,22 @@ def rastreio_publico(token):
     pedido = db.buscar_pedido(token)
     if not pedido: return "Não encontrado", 404
     
-    etapas = json.loads(pedido['etapas_json'])
+    # --- MESMA CORREÇÃO AQUI ---
+    etapas = []
+    if pedido['etapas_json']:
+        try:
+            etapas = json.loads(pedido['etapas_json'])
+        except:
+             etapas = []
+    else:
+        etapas = ["Produto não encontrado"]
+
     progresso = 0
     if len(etapas) > 0:
         progresso = int(((pedido['etapa_index'] + 1) / len(etapas)) * 100)
-        if pedido['status'] == 'Concluído': progresso = 100
+    
+    if pedido['status'] == 'Concluído': 
+        progresso = 100
 
     return render_template('rastreio_cliente.html', pedido=pedido, progresso=progresso, etapas=etapas)
 
@@ -146,13 +214,3 @@ def avaliar_pedido(token):
 
     return render_template('avaliar_pedido.html', pedido=pedido)
 
-@pedidos.route('/cancelar_pedido/<token>', methods=['POST'])
-def cancelar_pedido_rota(token):
-    if 'user_id' not in session:
-        return redirect(url_for('usuarios.login'))
-
-    # Chama a nova lógica de estorno e cancelamento
-    db.cancelar_pedido(token)
-    
-    flash("Pedido cancelado e itens estornados ao estoque.")
-    return redirect(url_for('pedidos.detalhes_pedido', token=token))

@@ -6,6 +6,7 @@ def criar_conexao():
     conn.row_factory = sqlite3.Row 
     return conn
 
+
 def criar_tabelas():
     conn = criar_conexao()
     cursor = conn.cursor()
@@ -67,6 +68,7 @@ def criar_tabelas():
     conn.commit()
     conn.close()
 
+
 # --- Funções de Usuário ---
 def adicionar_usuario(email, senha_hash):
     conn = criar_conexao()
@@ -74,11 +76,13 @@ def adicionar_usuario(email, senha_hash):
     conn.commit()
     conn.close()
 
+
 def buscar_usuario(email):
     conn = criar_conexao()
     usuario = conn.execute("SELECT * FROM usuarios WHERE email = ?", (email,)).fetchone()
     conn.close()
     return usuario
+
 
 # --- NOVAS Funções de Produtos ---
 def adicionar_produto(nome, estoque, lista_etapas):
@@ -90,11 +94,13 @@ def adicionar_produto(nome, estoque, lista_etapas):
     conn.commit()
     conn.close()
 
+
 def listar_produtos():
     conn = criar_conexao()
     produtos = conn.execute("SELECT * FROM produtos").fetchall()
     conn.close()
     return produtos
+
 
 def buscar_produto(id):
     conn = criar_conexao()
@@ -102,11 +108,13 @@ def buscar_produto(id):
     conn.close()
     return produto
 
+
 def atualizar_estoque(produto_id, nova_qtd):
     conn = criar_conexao()
     conn.execute("UPDATE produtos SET estoque_atual = ? WHERE id = ?", (nova_qtd, produto_id))
     conn.commit()
     conn.close()
+
 
 # --- Funções de Pedidos (Adaptadas) ---
 def adicionar_pedido(dados):
@@ -148,6 +156,7 @@ def listar_pedidos():
     conn.close()
     return pedidos
 
+
 def buscar_pedido(token):
     conn = criar_conexao()
     query = """
@@ -160,6 +169,7 @@ def buscar_pedido(token):
     conn.close()
     return pedido
 
+
 def atualizar_progresso_pedido(token, novo_status, novo_index):
     conn = criar_conexao()
     conn.execute("UPDATE pedidos SET status = ?, etapa_index = ? WHERE token_rastreio = ?", 
@@ -167,11 +177,13 @@ def atualizar_progresso_pedido(token, novo_status, novo_index):
     conn.commit()
     conn.close()
 
+
 def salvar_avaliacao_pedido(token, nota, obs):
     conn = criar_conexao()
     conn.execute("UPDATE pedidos SET avaliacao_nota = ?, avaliacao_obs = ? WHERE token_rastreio = ?", (nota, obs, token))
     conn.commit()
     conn.close()
+
 
 def apagar_pedido(token):
     # Nota: Em produção real, faríamos Soft Delete. Mantendo hard delete por enquanto.
@@ -193,6 +205,7 @@ def atualizar_produto(id, nome, estoque, lista_etapas):
     conn.commit()
     conn.close()
 
+
 def listar_feedbacks():
     conn = criar_conexao()
     # Busca pedidos com nota, trazendo também o nome do produto
@@ -206,6 +219,7 @@ def listar_feedbacks():
     feedbacks = conn.execute(query).fetchall()
     conn.close()
     return feedbacks
+
 
 def cancelar_pedido(token):
     conn = criar_conexao()
@@ -231,3 +245,40 @@ def cancelar_pedido(token):
         conn.commit()
     
     conn.close()
+
+
+def atualizar_pedido(token, cliente_nome, cliente_email, descricao, status, prioridade, prazo):
+    conn = criar_conexao()
+    conn.execute("""
+        UPDATE pedidos 
+        SET cliente_nome = ?, 
+            cliente_email = ?, 
+            descricao = ?, 
+            status = ?, 
+            prioridade = ?, 
+            prazo_entrega = ? 
+        WHERE token_rastreio = ?
+    """, (cliente_nome, cliente_email, descricao, status, prioridade, prazo, token))
+    conn.commit()
+    conn.close()
+
+
+def excluir_produto(id):
+    conn = criar_conexao()
+    
+    # 1. Verificação de Integridade: O produto está em uso?
+    qtd_pedidos = conn.execute("SELECT COUNT(*) FROM pedidos WHERE produto_id = ?", (id,)).fetchone()[0]
+    
+    if qtd_pedidos > 0:
+        conn.close()
+        return False, f"Não é possível excluir: Existem {qtd_pedidos} pedidos vinculados a este item."
+    
+    # 2. Se livre, exclui
+    try:
+        conn.execute("DELETE FROM produtos WHERE id = ?", (id,))
+        conn.commit()
+        conn.close()
+        return True, "Produto excluído com sucesso."
+    except Exception as e:
+        conn.close()
+        return False, f"Erro interno ao excluir: {e}"

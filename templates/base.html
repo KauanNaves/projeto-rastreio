@@ -41,20 +41,18 @@
                       </li>
                       
                       <li class="nav-item">
-                          <a class="nav-link text-white fw-semibold" href="{{ url_for('produtos.lista') }}">
-                              <i class="bi bi-tools me-1"></i> Produtos & Estoque
+                          <a class="nav-link text-white" href="{{ url_for('produtos.lista') }}">
+                              Produtos | Estoque
                           </a>
                       </li>
 
                       <li class="nav-item">
-                          <a class="nav-link text-white opacity-75" href="{{ url_for('main.sobre') }}">Sobre</a>
+                          <a class="nav-link text-white" href="{{ url_for('pedidos.lista_feedbacks') }}">Feedbacks</a>
                       </li>
 
                       <li class="nav-item">
-    <a class="nav-link text-white fw-semibold" href="{{ url_for('pedidos.lista_feedbacks') }}">
-        <i class="bi bi-graph-up-arrow me-1"></i> Feedbacks
-    </a>
-</li>
+                          <a class="nav-link text-white opacity-60" href="{{ url_for('main.sobre') }}">Sobre</a>
+                      </li>
                       
                       <li class="nav-item ms-lg-2">
                           <a class="btn btn-outline-light btn-sm px-4" href="{{ url_for('usuarios.logout') }}">Sair</a>

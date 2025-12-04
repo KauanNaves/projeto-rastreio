@@ -22,6 +22,7 @@ def lista():
 
     return render_template('produtos.html', produtos=produtos_formatados)
 
+
 @produtos_bp.route('/novo_produto', methods=['GET', 'POST'])
 def novo_produto():
     if 'user_id' not in session:
@@ -95,3 +96,21 @@ def editar_produto(id):
         etapas_texto = ""
 
     return render_template('editar_produto.html', produto=produto, etapas_texto=etapas_texto)
+
+
+@produtos_bp.route('/excluir_produto/<int:id>', methods=['POST'])
+def excluir_produto_rota(id):
+    if 'user_id' not in session:
+        return redirect(url_for('usuarios.login'))
+
+    sucesso, mensagem = db.excluir_produto(id)
+    
+    if sucesso:
+        flash(mensagem) # Mensagem padrão (info/sucesso)
+    else:
+        # Precisamos de uma categoria diferente para erro? 
+        # O base.html atual mostra tudo como 'alert-info', mas funciona.
+        flash(f"ERRO: {mensagem}") 
+        
+    return redirect(url_for('produtos.lista'))
+

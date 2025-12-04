@@ -22,10 +22,12 @@ def login():
             
     return render_template('login.html')
 
+
 @usuarios.route('/logout')
 def logout():
     session.clear()
     return redirect(url_for('usuarios.login'))
+
 
 @usuarios.route('/cadastro', methods=['GET', 'POST'])
 def cadastro():
@@ -61,3 +63,4 @@ def cadastro():
             return redirect(url_for('usuarios.cadastro'))
 
     return render_template('cadastro.html')
+
