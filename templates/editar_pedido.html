@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% block title %}Editar Pedido #123456{% endblock %} 
+{% block title %}Editar Pedido #{{ pedido.numero_pedido }}{% endblock %} 
 
 {% block extra_styles %}
 <link rel="stylesheet" href="{{ url_for('static', filename='novo_pedido.css') }}" />
@@ -12,7 +12,8 @@
         <div class="col-lg-8 col-xl-7">
             
             <div class="mb-3">
-                <a href="{{ url_for('pedidos.detalhes_pedido') }}" class="text-decoration-none text-secondary d-flex align-items-center gap-2">
+                {# Link corrigido com token #}
+                <a href="{{ url_for('pedidos.detalhes_pedido', token=pedido.token_rastreio) }}" class="text-decoration-none text-secondary d-flex align-items-center gap-2">
                     <i class="bi bi-arrow-left"></i> Cancelar e Voltar
                 </a>
             </div>
@@ -21,14 +22,14 @@
                 <div class="card-header bg-white border-bottom py-3">
                     <div class="d-flex justify-content-between align-items-center">
                         <h1 class="h4 fw-bold text-primary mb-0 d-flex align-items-center gap-2">
-                            <i class="bi bi-pencil-square"></i> Editar Pedido <span class="text-muted">#123456</span>
+                            <i class="bi bi-pencil-square"></i> Editar Pedido <span class="text-muted">#{{ pedido.numero_pedido }}</span>
                         </h1>
-                        <span class="badge bg-warning text-dark border border-warning bg-opacity-25">Em andamento</span>
                     </div>
                 </div>
                 
                 <div class="card-body p-4">
-                    <form action="{{ url_for('pedidos.editar_pedido') }}" method="POST">
+                    {# Action corrigida com token #}
+                    <form action="{{ url_for('pedidos.editar_pedido', token=pedido.token_rastreio) }}" method="POST">
                         
                         <div class="mb-4">
                             <label for="cliente" class="form-label fw-semibold">Nome do Cliente</label>
@@ -36,7 +37,8 @@
                                 <span class="input-group-text bg-light border-end-0">
                                     <i class="bi bi-person text-secondary"></i>
                                 </span>
-                                <input type="text" class="form-control border-start-0 ps-0" id="cliente" name="cliente" value="Ana Silva" required>
+                                {# Preenchimento automático (value) #}
+                                <input type="text" class="form-control border-start-0 ps-0" id="cliente" name="cliente" value="{{ pedido.cliente_nome }}" required>
                             </div>
                         </div>
 
@@ -46,17 +48,15 @@
                                 <span class="input-group-text bg-light border-end-0">
                                     <i class="bi bi-envelope text-secondary"></i>
                                 </span>
-                                <input type="email" class="form-control border-start-0 ps-0" id="email" name="email" value="ana@exemplo.com" required>
+                                {# Nome do campo corrigido para 'email' e value preenchido #}
+                                <input type="email" class="form-control border-start-0 ps-0" id="email" name="email" value="{{ pedido.cliente_email }}" required>
                             </div>
                         </div>
 
                         <div class="mb-4">
                             <label for="descricao" class="form-label fw-semibold">Descrição do Pedido</label>
-                            <textarea class="form-control" id="descricao" name="descricao" rows="4" required>Fabricação de 50 unidades da peça modelo X-200.
-Material: Aço Inoxidável 304.
-Acabamento: Polido.
-
-Observação: Entregar embalado individualmente.</textarea>
+                            {# Textarea usa o valor entre as tags, não atributo value #}
+                            <textarea class="form-control" id="descricao" name="descricao" rows="4" required>{{ pedido.descricao }}</textarea>
                             <div class="form-text">Edite os detalhes, materiais e dimensões.</div>
                         </div>
 
@@ -67,30 +67,33 @@ Observação: Entregar embalado individualmente.</textarea>
                                     <span class="input-group-text bg-light border-end-0">
                                         <i class="bi bi-calendar-event text-secondary"></i>
                                     </span>
-                                    <input type="date" class="form-control border-start-0 ps-0" id="prazo" name="prazo" value="2025-03-30" required>
+                                    <input type="date" class="form-control border-start-0 ps-0" id="prazo" name="prazo" value="{{ pedido.prazo_entrega }}" required>
                                 </div>
                             </div>
 
                             <div class="col-md-4">
                                 <label for="prioridade" class="form-label fw-semibold">Prioridade</label>
                                 <select class="form-select" id="prioridade" name="prioridade">
-                                    <option value="baixa">Baixa</option>
-                                    <option value="normal">Normal</option>
-                                    <option value="alta" selected>Alta</option> <option value="urgente">Urgente</option>
+                                    {# Lógica para selecionar a opção correta #}
+                                    <option value="baixa" {% if pedido.prioridade == 'baixa' %}selected{% endif %}>Baixa</option>
+                                    <option value="normal" {% if pedido.prioridade == 'normal' %}selected{% endif %}>Normal</option>
+                                    <option value="alta" {% if pedido.prioridade == 'alta' %}selected{% endif %}>Alta</option>
+                                    <option value="urgente" {% if pedido.prioridade == 'urgente' %}selected{% endif %}>Urgente</option>
                                 </select>
                             </div>
 
                             <div class="col-md-4">
                                 <label for="status" class="form-label fw-semibold">Status Atual</label>
                                 <select class="form-select" id="status" name="status">
-                                    <option value="Pendente">Pendente</option>
-                                    <option value="Em andamento" selected>Em andamento</option> <option value="Concluído">Concluído</option>
+                                    <option value="Pendente" {% if pedido.status == 'Pendente' %}selected{% endif %}>Pendente</option>
+                                    <option value="Em andamento" {% if pedido.status == 'Em andamento' %}selected{% endif %}>Em andamento</option>
+                                    <option value="Concluído" {% if pedido.status == 'Concluído' %}selected{% endif %}>Concluído</option>
                                 </select>
                             </div>
                         </div>
 
                         <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-5 border-top pt-4">
-                            <a href="{{ url_for('pedidos.detalhes_pedido') }}" class="btn btn-light border px-4">Cancelar</a>
+                            <a href="{{ url_for('pedidos.detalhes_pedido', token=pedido.token_rastreio) }}" class="btn btn-light border px-4">Cancelar</a>
                             <button type="submit" class="btn btn-primary px-4 fw-semibold shadow-sm">
                                 <i class="bi bi-save me-1"></i> Salvar Alterações
                             </button>

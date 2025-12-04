@@ -29,6 +29,7 @@
                     <i class="bi bi-box-seam-fill"></i> FabTrack
                 </a>
                 
+                {% if session.get('user_id') %}
                 <button class="navbar-toggler border-0 text-white" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                     <i class="bi bi-list fs-2"></i>
                 </button>
@@ -38,24 +39,34 @@
                       <li class="nav-item"><a class="nav-link text-white" href="{{  url_for('main.index')}}">Home</a></li>
                       <li class="nav-item"><a class="nav-link text-white" href="{{  url_for('main.sobre')}}">Sobre</a></li>
                       <li class="nav-item">
-                          <a class="btn btn-outline-light btn-sm px-4" href="{{ url_for('usuarios.login') }}">Sair</a>
+                          <a class="btn btn-outline-light btn-sm px-4" href="{{ url_for('usuarios.logout') }}">Sair</a>
                       </li>
                     </ul>
                 </div>
+                {% endif %}
             </div>
           </nav>
         </header>
         
         <main class="container my-4">
+            {% with messages = get_flashed_messages() %}
+                {% if messages %}
+                    <div class="alert alert-info alert-dismissible fade show" role="alert">
+                        {% for message in messages %}
+                            {{ message }}
+                        {% endfor %}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                {% endif %}
+            {% endwith %}
+
             {% block content %}
             {% endblock %}
         </main>
 
         <footer>
           <div class="container">
-              <a href="{{  url_for('main.sobre') }}" style="text-decoration: none; color: inherit;">
-                <p class="m-0">&copy; FabTrack 2025 - Site criado somente para demonstração.</p>
-              </a>
+                <p class="m-0">&copy; FabTrack 2025 - Projeto de Extensão SENAI.</p>
           </div>
         </footer>
     </div>

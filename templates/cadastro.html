@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Login - FabTrack</title>
+    <title>Cadastro - FabTrack</title>
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -15,7 +15,6 @@
       integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN"
       crossorigin="anonymous"
     />
-    <link rel="stylesheet" href="{{ url_for('static', filename='login.css') }}">
     <style>body { background-color: #f8f9fa; font-family: 'Poppins', sans-serif; }</style>
   </head>
   <body>
@@ -23,20 +22,16 @@
     <main class="d-flex align-items-center justify-content-center vh-100 p-3">
       <div class="card border-0 shadow-lg" style="width: 100%; max-width: 400px; border-radius: 1rem; overflow: hidden;">
           
-          <div class="card-header bg-primary text-white text-center py-4 border-0">
-            <div class="d-inline-flex align-items-center justify-content-center bg-white text-primary rounded-circle mb-2" style="width: 50px; height: 50px;">
-                <i class="bi bi-box-seam-fill fs-3"></i>
-            </div>
-            <h1 class="h4 fw-bold mb-0">FabTrack</h1>
-            <p class="small opacity-75 mb-0">Gestão de Qualidade</p>
+          <div class="card-header bg-white text-center py-4 border-0">
+            <h1 class="h4 fw-bold text-primary mb-0">Criar Conta</h1>
+            <p class="small text-muted mb-0">Junte-se ao FabTrack</p>
           </div>
 
-          <div class="card-body p-4">
+          <div class="card-body p-4 pt-0">
             
             {% with messages = get_flashed_messages() %}
                 {% if messages %}
-                    <div class="alert alert-danger py-2 text-center small fade show" role="alert">
-                        <i class="bi bi-exclamation-circle-fill me-1"></i>
+                    <div class="alert alert-warning py-2 text-center small fade show" role="alert">
                         {% for message in messages %}
                             {{ message }}
                         {% endfor %}
@@ -44,32 +39,41 @@
                 {% endif %}
             {% endwith %}
 
-            <form action="{{ url_for('usuarios.login') }}" method="post">
+            <form action="{{ url_for('usuarios.cadastro') }}" method="post">
+              
               <div class="mb-3">
                 <label for="email" class="form-label fw-bold small text-secondary">EMAIL</label>
                 <div class="input-group">
                     <span class="input-group-text bg-light border-end-0 text-muted"><i class="bi bi-envelope"></i></span>
-                    <input type="email" class="form-control border-start-0 ps-0 bg-light" id="email" name="email" placeholder="seu@email.com" required autofocus />
+                    <input type="email" class="form-control border-start-0 ps-0 bg-light" id="email" name="email" placeholder="seu@email.com" required />
                 </div>
               </div>
               
-              <div class="mb-4">
+              <div class="mb-3">
                 <label for="senha" class="form-label fw-bold small text-secondary">SENHA</label>
                 <div class="input-group">
                     <span class="input-group-text bg-light border-end-0 text-muted"><i class="bi bi-lock"></i></span>
-                    <input type="password" class="form-control border-start-0 ps-0 bg-light" id="senha" name="senha" placeholder="••••••" required />
+                    <input type="password" class="form-control border-start-0 ps-0 bg-light" id="senha" name="senha" placeholder="Mínimo 6 caracteres" required />
+                </div>
+              </div>
+
+              <div class="mb-4">
+                <label for="confirmar_senha" class="form-label fw-bold small text-secondary">CONFIRMAR SENHA</label>
+                <div class="input-group">
+                    <span class="input-group-text bg-light border-end-0 text-muted"><i class="bi bi-lock-fill"></i></span>
+                    <input type="password" class="form-control border-start-0 ps-0 bg-light" id="confirmar_senha" name="confirmar_senha" placeholder="Repita a senha" required />
                 </div>
               </div>
               
               <div class="d-grid">
-                  <button type="submit" class="btn btn-primary fw-bold py-2 shadow-sm text-uppercase">Entrar no Sistema</button>
+                  <button type="submit" class="btn btn-primary fw-bold py-2 shadow-sm">CADASTRAR</button>
               </div>
             </form>
           </div>
 
           <div class="card-footer bg-light text-center py-3 border-0">
-              <p class="small text-muted mb-1">Novo no sistema?</p>
-              <a href="{{ url_for('usuarios.cadastro') }}" class="text-decoration-none fw-bold small">Criar nova conta</a>
+              <p class="small text-muted mb-1">Já tem uma conta?</p>
+              <a href="{{ url_for('usuarios.login') }}" class="text-decoration-none fw-bold small">Fazer Login</a>
           </div>
       </div>
     </main>

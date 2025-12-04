@@ -1,162 +1,281 @@
-{% extends "base.html" %}
-{% block title %}Detalhes do Pedido{% endblock %}
-
-{% block extra_styles %}
-<link rel="stylesheet" href="../static/detalhes_pedidos.css" />
-{% endblock %}
-
-{% block content %}
+{% extends "base.html" %} {% block title %}Detalhes do Pedido{% endblock %} {%
+block extra_styles %} {# Ajustei o caminho do CSS para garantir que carregue #}
+<link
+  rel="stylesheet"
+  href="{{ url_for('static', filename='detalhes_pedido.css') }}"
+/>
+{% endblock %} {% block content %}
 
 <section class="container py-4">
-    <div class="mb-4">
-        <a href="{{ url_for('main.index') }}" class="text-decoration-none text-secondary d-flex align-items-center gap-2">
-            <i class="bi bi-arrow-left"></i> Voltar para Meus Pedidos
-        </a>
+  <div class="mb-4">
+    <a
+      href="{{ url_for('main.index') }}"
+      class="text-decoration-none text-secondary d-flex align-items-center gap-2"
+    >
+      <i class="bi bi-arrow-left"></i> Voltar para Meus Pedidos
+    </a>
+  </div>
+
+  <div
+    class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4 gap-3"
+  >
+    <div>
+      {# TÍTULO DINÂMICO #}
+      <h1 class="h2 fw-bold text-primary mb-1 d-flex align-items-center gap-2">
+        Pedido #{{ pedido.numero_pedido }} {# STATUS DINÂMICO #} {% if
+        pedido.status == 'Concluído' %}
+        <span
+          class="badge bg-success bg-opacity-10 text-success border border-success fw-normal ms-2"
+          >{{ pedido.status }}</span
+        >
+        {% elif pedido.status == 'Em andamento' %}
+        <span
+          class="badge bg-warning bg-opacity-10 text-dark border border-warning fw-normal ms-2"
+          >{{ pedido.status }}</span
+        >
+        {% else %}
+        <span class="badge bg-light text-dark border fw-normal ms-2"
+          >{{ pedido.status }}</span
+        >
+        {% endif %}
+      </h1>
+      <p class="text-muted mb-0">Criado em {{ pedido.data_criacao }}</p>
     </div>
 
-    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4 gap-3">
-        <div>
-            <h1 class="h2 fw-bold text-primary mb-1 d-flex align-items-center gap-2">
-                Pedido #123456 <span class="badge bg-warning text-dark fs-6 border fw-normal ms-2">Em andamento</span>
-            </h1>
-            <p class="text-muted mb-0">Criado em 24 de março de 2025</p>
-        </div>
-        
-        <div class="d-flex gap-2">
-            <a href="{{ url_for('pedidos.avaliar_pedido') }}" class="btn btn-warning bg-opacity-25 border-warning text-dark fw-semibold">
-                <i class="bi bi-star-fill text-warning me-1"></i> <span class="d-none d-sm-inline">Avaliar</span>
-            </a>
+    <div class="d-flex gap-2">
+      {# Passamos o token para a rota de avaliar #}
 
-            <button type="button" class="btn btn-outline-secondary" onclick="compartilharPedido()">
-                <i class="bi bi-share"></i> <span class="d-none d-sm-inline">Compartilhar</span>
+      <button
+        type="button"
+        class="btn btn-outline-secondary"
+        onclick="compartilharPedido()"
+      >
+        <i class="bi bi-share"></i>
+        <span class="d-none d-sm-inline">Compartilhar</span>
+      </button>
+
+      {# Passamos o token para a rota de editar #}
+      <a
+        href="{{ url_for('pedidos.editar_pedido', token=pedido.token_rastreio) }}"
+        class="btn btn-outline-primary"
+      >
+        <i class="bi bi-pencil"></i>
+        <span class="d-none d-sm-inline">Editar</span>
+      </a>
+
+      <button
+        type="button"
+        class="btn btn-outline-danger"
+        data-bs-toggle="modal"
+        data-bs-target="#modalExcluir"
+      >
+        <i class="bi bi-trash"></i>
+        <span class="d-none d-sm-inline">Excluir</span>
+      </button>
+    </div>
+  </div>
+
+  <div class="row g-4">
+    <div class="col-lg-8">
+      <div class="card border-0 shadow-sm mb-4">
+        <div class="card-header bg-white py-3 border-bottom-0">
+          <h5 class="card-title fw-bold mb-0 text-secondary">
+            <i class="bi bi-file-text me-2"></i>Descrição do Pedido
+          </h5>
+        </div>
+        <div class="card-body pt-0">
+          <div class="p-3 bg-light rounded border">
+            {# DESCRIÇÃO DINÂMICA #}
+            <p class="card-text mb-0 text-dark" style="white-space: pre-line">
+              {{ pedido.descricao }}
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div class="card border-0 shadow-sm">
+        <div class="card-header bg-white py-3">
+          <h5 class="card-title fw-bold mb-0 text-secondary">
+            <i class="bi bi-bar-chart-steps me-2"></i>Status de Produção
+          </h5>
+        </div>
+        <div class="card-body">
+          <div class="position-relative m-4 mb-3">
+            {# BARRA DE PROGRESSO DINÂMICA #}
+            <div
+              class="progress"
+              style="height: 2px; background-color: #e9ecef"
+            >
+              <div
+                class="progress-bar"
+                role="progressbar"
+                style="width: {{ progresso }}%;"
+                aria-valuenow="{{ progresso }}"
+                aria-valuemin="0"
+                aria-valuemax="100"
+              ></div>
+            </div>
+
+            {# Mantive os botões estáticos por enquanto, mas eles refletem
+            visualmente os passos #}
+            <div
+              class="d-flex justify-content-between position-absolute top-0 start-0 w-100 translate-middle-y"
+            >
+              <div class="d-flex flex-col align-items-center">
+                <button
+                  type="button"
+                  class="btn btn-sm {{ 'btn-primary' if progresso >= 10 else 'btn-secondary' }} rounded-pill"
+                  style="width: 2rem; height: 2rem"
+                >
+                  1
+                </button>
+                <span class="small text-muted mt-2">Pendente</span>
+              </div>
+              <div class="d-flex flex-col align-items-center">
+                <button
+                  type="button"
+                  class="btn btn-sm {{ 'btn-primary' if progresso >= 50 else 'btn-secondary' }} rounded-pill"
+                  style="width: 2rem; height: 2rem"
+                >
+                  2
+                </button>
+                <span class="small fw-bold mt-2">Produção</span>
+              </div>
+              <div class="d-flex flex-col align-items-center">
+                <button
+                  type="button"
+                  class="btn btn-sm {{ 'btn-primary' if progresso >= 100 else 'btn-secondary' }} rounded-pill"
+                  style="width: 2rem; height: 2rem"
+                >
+                  3
+                </button>
+                <span class="small text-muted mt-2">Concluído</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-lg-4">
+      <div class="card border-0 shadow-sm h-100">
+        <div class="card-header bg-light border-bottom">
+          <h6 class="fw-bold mb-0 text-secondary">Informações Gerais</h6>
+        </div>
+        <div class="card-body p-0">
+          <ul class="list-group list-group-flush">
+            <li class="list-group-item p-3">
+              <span class="d-block text-muted small text-uppercase fw-bold mb-1"
+                >Cliente</span
+              >
+              <div class="d-flex align-items-center gap-2">
+                <div
+                  class="bg-primary bg-opacity-10 text-primary rounded-circle d-flex align-items-center justify-content-center"
+                  style="width: 32px; height: 32px"
+                >
+                  <i class="bi bi-person-fill"></i>
+                </div>
+                {# NOME DO CLIENTE #}
+                <span class="fw-medium">{{ pedido.cliente_nome }}</span>
+              </div>
+            </li>
+
+            <li class="list-group-item p-3">
+              <span class="d-block text-muted small text-uppercase fw-bold mb-1"
+                >Prazo de Entrega</span
+              >
+              <div class="d-flex align-items-center gap-2">
+                <i class="bi bi-calendar-event text-secondary"></i>
+                {# PRAZO #}
+                <span class="fw-medium">{{ pedido.prazo_entrega }}</span>
+              </div>
+            </li>
+
+            <li class="list-group-item p-3">
+              <span class="d-block text-muted small text-uppercase fw-bold mb-1"
+                >Prioridade</span
+              >
+              <div class="d-flex align-items-center gap-2">
+                {# Lógica de Cores #} {% if pedido.prioridade in ['alta',
+                'urgente'] %}
+                <i class="bi bi-flag-fill text-danger"></i>
+                <span class="fw-bold text-danger"
+                  >{{ pedido.prioridade|capitalize }}</span
+                >
+
+                {% elif pedido.prioridade == 'normal' %}
+                <i class="bi bi-flag-fill text-primary"></i>
+                <span class="fw-bold text-primary"
+                  >{{ pedido.prioridade|capitalize }}</span
+                >
+
+                {% else %} {# Baixa #}
+                <i class="bi bi-flag-fill text-success"></i>
+                <span class="fw-bold text-success"
+                  >{{ pedido.prioridade|capitalize }}</span
+                >
+                {% endif %}
+              </div>
+            </li>
+
+            <li class="list-group-item p-3">
+              <span class="d-block text-muted small text-uppercase fw-bold mb-1"
+                >Contato</span
+              >
+              {# EMAIL DO CLIENTE #}
+              <a
+                href="mailto:{{ pedido.cliente_email }}"
+                class="text-decoration-none"
+                >{{ pedido.cliente_email }}</a
+              >
+            </li>
+          </ul>
+        </div>
+        <div class="card-footer bg-white p-3">
+          {# Formulário de Conclusão com Rota Correta #}
+          <form
+            action="{{ url_for('pedidos.concluir_pedido', token=pedido.token_rastreio) }}"
+            method="POST"
+          >
+            <button class="btn btn-success w-100">
+              <i class="bi bi-check-circle me-1"></i> Marcar como Concluído
             </button>
-
-            <a href="{{  url_for('pedidos.editar_pedido') }}" class="btn btn-outline-primary">
-                <i class="bi bi-pencil"></i> <span class="d-none d-sm-inline">Editar</span>
-            </a>
-
-            <button type="button" class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#modalExcluir">
-                <i class="bi bi-trash"></i> <span class="d-none d-sm-inline">Excluir</span>
-            </button>
+          </form>
         </div>
+      </div>
     </div>
-
-    <div class="row g-4">
-        <div class="col-lg-8">
-            
-            <div class="card border-0 shadow-sm mb-4">
-                <div class="card-header bg-white py-3 border-bottom-0">
-                    <h5 class="card-title fw-bold mb-0 text-secondary">
-                        <i class="bi bi-file-text me-2"></i>Descrição do Pedido
-                    </h5>
-                </div>
-                <div class="card-body pt-0">
-                    <div class="p-3 bg-light rounded border">
-                        <p class="card-text mb-0 text-dark" style="white-space: pre-line;">
-                            Fabricação de 50 unidades da peça modelo X-200.
-                            Material: Aço Inoxidável 304.
-                            Acabamento: Polido.
-                            
-                            <strong>Observação: Entregar embalado individualmente.</strong>
-                        </p>
-                    </div>
-                </div>
-            </div>
-
-            <div class="card border-0 shadow-sm">
-                <div class="card-header bg-white py-3">
-                    <h5 class="card-title fw-bold mb-0 text-secondary">
-                        <i class="bi bi-bar-chart-steps me-2"></i>Status de Produção
-                    </h5>
-                </div>
-                <div class="card-body">
-                    <div class="position-relative m-4 mb-3">
-                        <div class="progress" style="height: 2px; background-color: #e9ecef;">
-                            <div class="progress-bar" role="progressbar" style="width: 47%;" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100"></div>
-                        </div>
-                        <div class="d-flex justify-content-between position-absolute top-0 start-0 w-100 translate-middle-y">
-                            <div class="d-flex flex-col align-items-center">
-                                <button type="button" class="btn btn-sm btn-primary rounded-pill" style="width: 2rem; height:2rem;">1</button>
-                                <span class="small text-muted mt-2">Pendente</span>
-                            </div>
-                            <div class="d-flex flex-col align-items-center">
-                                <button type="button" class="btn btn-sm btn-primary rounded-pill" style="width: 2rem; height:2rem;">2</button>
-                                <span class="small fw-bold mt-2">Produção</span>
-                            </div>
-                            <div class="d-flex flex-col align-items-center">
-                                <button type="button" class="btn btn-sm btn-secondary rounded-pill" style="width: 2rem; height:2rem;">3</button>
-                                <span class="small text-muted mt-2">Concluído</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-lg-4">
-            <div class="card border-0 shadow-sm h-100">
-                <div class="card-header bg-light border-bottom">
-                    <h6 class="fw-bold mb-0 text-secondary">Informações Gerais</h6>
-                </div>
-                <div class="card-body p-0">
-                    <ul class="list-group list-group-flush">
-                        <li class="list-group-item p-3">
-                            <span class="d-block text-muted small text-uppercase fw-bold mb-1">Cliente</span>
-                            <div class="d-flex align-items-center gap-2">
-                                <div class="bg-primary bg-opacity-10 text-primary rounded-circle d-flex align-items-center justify-content-center" style="width: 32px; height: 32px;">
-                                    <i class="bi bi-person-fill"></i>
-                                </div>
-                                <span class="fw-medium">Ana Silva</span>
-                            </div>
-                        </li>
-
-                        <li class="list-group-item p-3">
-                            <span class="d-block text-muted small text-uppercase fw-bold mb-1">Prazo de Entrega</span>
-                            <div class="d-flex align-items-center gap-2">
-                                <i class="bi bi-calendar-event text-secondary"></i>
-                                <span class="fw-medium">30 de Março de 2025</span>
-                            </div>
-                        </li>
-
-                        <li class="list-group-item p-3">
-                            <span class="d-block text-muted small text-uppercase fw-bold mb-1">Prioridade</span>
-                            <div class="d-flex align-items-center gap-2">
-                                <i class="bi bi-flag-fill text-danger"></i>
-                                <span class="fw-bold text-danger">Alta</span>
-                            </div>
-                        </li>
-
-                         <li class="list-group-item p-3">
-                            <span class="d-block text-muted small text-uppercase fw-bold mb-1">Contato</span>
-                            <a href="mailto:ana@exemplo.com" class="text-decoration-none">ana@exemplo.com</a>
-                        </li>
-                    </ul>
-                </div>
-                <div class="card-footer bg-white p-3">
-                    <form action="{{ url_for('pedidos.concluir_pedido') }}" method="POST">
-                        <button class="btn btn-success w-100">
-                            <i class="bi bi-check-circle me-1"></i> Marcar como Concluído
-                        </button>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
+  </div>
 </section>
 
+{# MODAL DE EXCLUSÃO #}
 <div class="modal fade" id="modalExcluir" tabindex="-1" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content">
       <div class="modal-header border-0 pb-0">
         <h5 class="modal-title fw-bold">Confirmar Exclusão</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+          aria-label="Close"
+        ></button>
       </div>
       <div class="modal-body">
-        Tem certeza que deseja excluir o pedido <strong>#123456</strong>? Esta ação não pode ser desfeita.
+        Tem certeza que deseja excluir o pedido
+        <strong>#{{ pedido.numero_pedido }}</strong>? Esta ação não pode ser
+        desfeita.
       </div>
       <div class="modal-footer border-0 pt-0">
-        <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancelar</button>
-        <form action="{{ url_for('pedidos.excluir_pedido') }}" method="post"><button type="submit"  class="btn btn-danger">Sim, excluir</button></form>
+        <button type="button" class="btn btn-light" data-bs-dismiss="modal">
+          Cancelar
+        </button>
+        {# Formulário de Exclusão com Rota Correta #}
+        <form
+          action="{{ url_for('pedidos.excluir_pedido', token=pedido.token_rastreio) }}"
+          method="post"
+        >
+          <button type="submit" class="btn btn-danger">Sim, excluir</button>
+        </form>
       </div>
     </div>
   </div>
@@ -164,26 +283,63 @@
 
 <script>
     async function compartilharPedido() {
+        // Constrói o link público
+        const token = "{{ pedido.token_rastreio }}";
+        const urlPublica = `${window.location.origin}/rastreio/${token}`;
+        
         const shareData = {
-            title: 'FabTrack - Pedido #123456',
-            text: 'Veja os detalhes do pedido #123456 no FabTrack:',
-            url: window.location.href
+            title: 'Acompanhe seu Pedido - FabTrack',
+            text: `Olá {{ pedido.cliente_nome }}, acompanhe o status do seu pedido #${token} no link abaixo:`,
+            url: urlPublica
         };
 
+        // 1. Tenta usar o compartilhamento nativo do celular (WhatsApp, etc)
         if (navigator.share) {
             try {
                 await navigator.share(shareData);
+                return; // Se funcionou, para por aqui
             } catch (err) {
-                console.log('Usuário cancelou o compartilhamento');
+                console.log('Compartilhamento nativo cancelado ou falhou, tentando copiar...');
             }
-        } else {
-            try {
-                await navigator.clipboard.writeText(window.location.href);
-                alert('Link copiado para a área de transferência!');
-            } catch (err) {
-                alert('Não foi possível copiar o link.');
-            }
+        } 
+
+        // 2. Se falhar ou estiver no PC, tenta copiar para a área de transferência
+        try {
+            // Método moderno
+            await navigator.clipboard.writeText(urlPublica);
+            alert('Link PÚBLICO copiado com sucesso!\n\n' + urlPublica);
+        } catch (err) {
+            // 3. Método de emergência (Fallback) para navegadores que bloqueiam o anterior
+            copiarTextoFallback(urlPublica);
         }
+    }
+
+    function copiarTextoFallback(texto) {
+        // Cria um campo de texto invisível temporário
+        const textArea = document.createElement("textarea");
+        textArea.value = texto;
+        
+        // Garante que o campo não seja visível na tela
+        textArea.style.position = "fixed";
+        textArea.style.left = "-9999px";
+        textArea.style.top = "0";
+        
+        document.body.appendChild(textArea);
+        textArea.focus();
+        textArea.select();
+
+        try {
+            const sucesso = document.execCommand('copy');
+            if (sucesso) {
+                alert('Link PÚBLICO copiado com sucesso!\n\n' + texto);
+            } else {
+                prompt("Não foi possível copiar automaticamente. Copie o link abaixo manualmente:", texto);
+            }
+        } catch (err) {
+            prompt("Copie o link abaixo manualmente:", texto);
+        }
+
+        document.body.removeChild(textArea);
     }
 </script>
 
